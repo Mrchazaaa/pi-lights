@@ -7,62 +7,78 @@ var pins = [
     new Gpio(27, 'out')
 ];
 
-async function run() {
+var averageQueue = [];
 
-    var averageQueue = [await average_sensor_readings(), await average_sensor_readings(), await average_sensor_readings()]
+var averageQueueSize = 3;
 
-    function mean(array) {
+function mean(array) {
+    try {
         return array.reduce((a, b) => a + b) / array.length;
     }
-
-    const sleep = (milliseconds) => {
-        return new Promise(resolve => setTimeout(resolve, milliseconds))
-    }
-
-    function rc_time(sensor) {
-        return new Promise(async (resolve, reject) => {
-            var count = 0;
-
-            sensor.setDirection('out');
-        
-            await sensor.write(0);
-            
-            setTimeout(async sensor => {
-                
-                sensor.setDirection('in');
-                
-                // Count until the pin goes high
-                while (await sensor.read() == 0) {
-                    count += 1;
-                }
-
-                resolve(count);
-            }, 100, sensor);
-        });
-    }
-
-    function average_sensor_readings() {
-        return Promise.all(pins.map(x => rc_time(x))).then((values) => {
-            return mean(values);
-        });
-    }
-
-    console.log(averageQueue);
-
-    // Catch when script is interrupted, cleanup correctly
-    // Main loop
-    while (true) {
-        readingsMean = await average_sensor_readings();
-        
-        averageQueue.shift();
-        averageQueue.push(readingsMean);
-    
-        console.log(mean(averageQueue));
+    catch(e) {
+        return "A:D";
     }
 }
 
-run();
+function get_individual_sensor_reading(sensor) {
+    return new Promise(async (resolve, reject) => {
+        var count = 0;
+
+        sensor.setDirection('out');
+    
+        await sensor.write(0);
+        
+        setTimeout(async sensor => {
+            
+            sensor.setDirection('in');
+            
+            // Count until the pin goes high
+            while (await sensor.read() == 0) {
+                count += 1;
+            }
+
+            resolve(count);
+        }, 100, sensor);
+    });
+}
+
+function get_average_sensor_readings() {
+    return Promise.all(pins.map(x => get_individual_sensor_reading(x)))
+        .then(values => {
+            return mean(values);
+        });
+}
+
+function append_new_reading(pastReadings) {
+    return new Promise(async (resolve, reject) => {
+        readingsMean = await get_average_sensor_readings();
+    
+        pastReadings.shift();
+        pastReadings.push(readingsMean);
+
+        resolve(pastReadings);
+    });
+}
+ 
+async function getLightLevel() {
+    if (averageQueue.length != averageQueueSize) {
+        averageQueue = new Array(averageQueueSize).fill(await get_average_sensor_readings());
+    }
+
+    await append_new_reading(averageQueue);
+
+    return mean(averageQueue);
+}
+
+// async function run() {
+//     while(true) {
+//         console.log(await getLightLevel());
+//     }
+// }
+
+// run();
 
 ON_DEATH(function(signal, err) {
+    console.log("cleaning sensor GPIO");
     pins.map(x => x.unexport());
 });
