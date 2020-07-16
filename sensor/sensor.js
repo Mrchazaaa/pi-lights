@@ -9,15 +9,10 @@ var pins = [
 
 var averageQueue = [];
 
-var averageQueueSize = 50;
+var averageQueueSize = 50000;
 
 function mean(array) {
-    try {
-        return array.reduce((a, b) => a + b) / array.length;
-    }
-    catch(e) {
-        return "A:D";
-    }
+    return array.reduce((a, b) => a + b) / array.length;
 }
 
 function getIndividualSensorReading(sensor) {
