@@ -1,5 +1,6 @@
 var ON_DEATH = require('death');
 var Gpio = require('onoff').Gpio;
+const fs = require('fs')
 
 var pins = [
     new Gpio(4, 'out'),
@@ -9,7 +10,9 @@ var pins = [
 
 var averageQueue = [];
 
-var averageQueueSize = 50000;
+var averageQueueSize = 3000;
+
+var threshhold = 165;
 
 function mean(array) {
     return array.reduce((a, b) => a + b) / array.length;
@@ -63,21 +66,29 @@ async function getLightLevel() {
     await appendNewReading(averageQueue);
 
     var newLightLevel = mean(averageQueue);
+    
+    // log new level
     console.log("got new light level: " + newLightLevel);
+
+    // store new light datum
+    await fs.open(`./${new Date().toISOString().replace(/T.*/, '')}.json`, 'a+', async (err, data) => {
+        var json = JSON.parse(data)
+        json[Date.now()] = newLightLevel;
+    
+        await fs.writeFile("results.json", JSON.stringify(json))
+    });
 
     return newLightLevel;
 }
 
-// async function run() {
-//     while(true) {
-//         console.log(await getLightLevel());
-//     }
-// }
-
-// run();
+async function isDark() {
+    // lower value means the detected light is bright 
+    return (threshhold - await sensor.getLightLevel()) <= 0;
+}
 
 module.exports = {
-    getLightLevel
+    getLightLevel,
+    isDark
 }
 
 ON_DEATH(function(signal, err) {

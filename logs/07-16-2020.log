@@ -1,0 +1,29 @@
+[2020-07-16T22:01:19.656Z] found no devices.
+[2020-07-16T22:01:19.667Z] discovering devices
+[2020-07-16T22:01:29.693Z] discovered: 
+[2020-07-16T22:01:29.694Z] found no devices.
+[2020-07-16T22:01:29.694Z] discovering devices
+[2020-07-16T22:01:39.700Z] discovered: 
+[2020-07-16T22:01:39.701Z] found no devices.
+[2020-07-16T22:01:39.702Z] discovering devices
+[2020-07-16T22:01:49.714Z] discovered: 192.168.1.213,192.168.1.234
+[2020-07-16T22:01:49.715Z] found 2 devices.
+[2020-07-16T22:01:49.718Z] querying state of 192.168.1.213
+[2020-07-16T22:05:15.364Z] cleaning sensor GPIO
+[2020-07-16T22:05:15.378Z] cleaning sensor GPIO
+fs.js:130
+    throw err;
+    ^
+
+Error: EBADF: bad file descriptor, close
+    at Object.closeSync (fs.js:413:3)
+    at Gpio.unexport (/home/pi/workspace/lights/node_modules/onoff/onoff.js:307:8)
+    at /home/pi/workspace/lights/sensor/sensor.js:96:21
+    at Array.map (<anonymous>)
+    at /home/pi/workspace/lights/sensor/sensor.js:96:10
+    at process.handler (/home/pi/workspace/lights/node_modules/death/lib/death.js:29:20)
+    at process.emit (events.js:209:13) {
+  errno: -9,
+  syscall: 'close',
+  code: 'EBADF'
+}

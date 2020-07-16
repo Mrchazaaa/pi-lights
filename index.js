@@ -2,20 +2,16 @@ require('log-timestamp') // prepends UTC timestamp to log messages
 var lights = require('./lights/lights');
 var sensor = require('./sensor/sensor');
 
-var threshhold = 1400;
 var lightsOn = {};
 
 async function run(device) {
 	try
 	{
-		// lower value means the detected light is bright 
-		var isDark = (threshhold - await sensor.getLightLevel()) <= 0;
-
 		if (lightsOn[device._address] == undefined) {
 			lightsOn[device._address] = await lights.areLightsOn(device);
 		}
 
-		switch(isDark) {
+		switch(sensor.isDark()) {
 			case true:
 				console.log('it is dark');
 				
