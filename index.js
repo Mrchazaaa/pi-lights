@@ -11,7 +11,7 @@ async function run(device) {
 			lightsOn[device._address] = await lights.areLightsOn(device);
 		}
 
-		switch(sensor.isDark()) {
+		switch(await sensor.isDark()) {
 			case true:
 				console.log('it is dark');
 				

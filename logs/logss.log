@@ -1,0 +1,41 @@
+[2020-07-17T10:30:05.539Z] found no devices.
+[2020-07-17T10:30:05.557Z] discovering devices
+[2020-07-17T10:30:15.591Z] discovered: 192.168.1.213
+[2020-07-17T10:30:15.594Z] found 1 device.
+[2020-07-17T10:30:15.597Z] querying state of 192.168.1.213
+[2020-07-17T10:30:16.183Z] querying state of 192.168.1.213 responded with false
+[2020-07-17T10:30:16.408Z] got new light level: 0.5003333333333333
+[2020-07-17T10:30:16.414Z] it is not dark
+[2020-07-17T10:30:16.414Z] discovering devices
+[2020-07-17T10:30:26.426Z] discovered: 192.168.1.213,192.168.1.234
+[2020-07-17T10:30:26.427Z] found 2 devices.
+[2020-07-17T10:30:26.547Z] got new light level: 0.5005
+[2020-07-17T10:30:26.553Z] it is not dark
+[2020-07-17T10:30:26.553Z] querying state of 192.168.1.234
+[2020-07-17T10:30:31.563Z] could not connect to 192.168.1.234, removing.
+[2020-07-17T10:30:31.564Z] found 1 device.
+[2020-07-17T10:30:31.686Z] got new light level: 0.5006666666666667
+[2020-07-17T10:30:31.691Z] it is not dark
+[2020-07-17T10:30:31.692Z] discovering devices
+[2020-07-17T10:30:41.705Z] discovered: 192.168.1.234,192.168.1.213
+[2020-07-17T10:30:41.706Z] found 2 devices.
+[2020-07-17T10:30:41.706Z] querying state of 192.168.1.234
+[2020-07-17T10:30:43.496Z] cleaning sensor GPIO
+[2020-07-17T10:30:44.425Z] cleaning sensor GPIO
+fs.js:130
+    throw err;
+    ^
+
+Error: EBADF: bad file descriptor, close
+    at Object.closeSync (fs.js:413:3)
+    at Object.closeSync (/home/pi/workspace/lights/node_modules/graceful-fs/graceful-fs.js:74:20)
+    at Gpio.unexport (/home/pi/workspace/lights/node_modules/onoff/onoff.js:307:8)
+    at /home/pi/workspace/lights/sensor/sensor.js:109:21
+    at Array.map (<anonymous>)
+    at /home/pi/workspace/lights/sensor/sensor.js:109:10
+    at process.handler (/home/pi/workspace/lights/node_modules/death/lib/death.js:29:20)
+    at process.emit (events.js:209:13) {
+  errno: -9,
+  syscall: 'close',
+  code: 'EBADF'
+}

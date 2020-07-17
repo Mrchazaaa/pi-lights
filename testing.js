@@ -1,13 +1,18 @@
-const fs = require('fs')
+const fs = require('fs');
+const jsonfile = require('jsonfile');
 
 async function run() {
-    // store new light datum
-    await fs.open(`./${new Date().toISOString().replace(/T.*/, '')}.json`, 'a+', async (err, data) => {
-        var json = JSON.parse(data)
-        json[Date.now()] = "newLightLevel";
+    const filepath = './data/g7.json';
+ 
+    var data = {};
 
-        // await fs.writeFile("results.json", JSON.stringify(json))
-    });
+    if (fs.existsSync(filepath)) {
+        data =jsonfile.readFileSync(filepath);
+    }
+
+    data['4'] = "cool";
+
+    jsonfile.writeFileSync(filepath, data);
 }
 
 run();

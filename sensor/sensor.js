@@ -1,6 +1,7 @@
 var ON_DEATH = require('death');
 var Gpio = require('onoff').Gpio;
 const fs = require('fs')
+const jsonfile = require('jsonfile');
 
 var pins = [
     new Gpio(4, 'out'),
@@ -70,20 +71,32 @@ async function getLightLevel() {
     // log new level
     console.log("got new light level: " + newLightLevel);
 
-    // store new light datum
-    await fs.open(`./${new Date().toISOString().replace(/T.*/, '')}.json`, 'a+', async (err, data) => {
-        var json = JSON.parse(data)
-        json[Date.now()] = newLightLevel;
-    
-        await fs.writeFile("results.json", JSON.stringify(json))
-    });
+    logDatum(newLightLevel);
 
     return newLightLevel;
 }
 
+function logDatum(datum) {
+    try {
+        const filepath = `/home/pi/workspace/lights/sensor/data/${new Date().toISOString().replace(/T.*/, '')}.json`;
+    
+        var data = {};
+
+        if (fs.existsSync(filepath)) {
+            data =jsonfile.readFileSync(filepath);
+        }
+
+        data[Date.now()] = datum;
+
+        jsonfile.writeFileSync(filepath, data);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 async function isDark() {
     // lower value means the detected light is bright 
-    return (threshhold - await sensor.getLightLevel()) <= 0;
+    return (threshhold - await getLightLevel()) <= 0;
 }
 
 module.exports = {
