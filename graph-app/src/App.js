@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-var CanvasJS = require('canvasjs');
+import LineChart from './LineChart';
 
 function App() {
-
-  useEffect(() => {
-    // Update the document title using the browser API
-  });
-
   return (
     <div className="App">
       <header className="App-header">
@@ -25,6 +20,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <LineChart/>
     </div>
   );
 }
