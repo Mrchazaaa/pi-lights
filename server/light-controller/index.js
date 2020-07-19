@@ -20,7 +20,12 @@ async function runDeviceLoop(device) {
 				
 				if (!lightsOn[device._address]) {
 					await lights.turnOn(device);
-					lightsOn[device._address] = await lights.areLightsOn(device); // SHOULD be true
+					try {
+						lightsOn[device._address] = await lights.areLightsOn(device); // SHOULD be true
+						log(`set light on cache to ${lightsOn[device._address]} for ${device._address}.`);
+					} catch(e) {
+						lightsOn[device._address] = undefined;
+					}
 				}
 				break;
 			case false:
@@ -28,14 +33,20 @@ async function runDeviceLoop(device) {
 
 				if (lightsOn[device._address]) {
 					await lights.turnOff(device);
-					lightsOn[device._address] = await lights.areLightsOn(device); // SHOULD be false
+					try {
+						lightsOn[device._address] = await lights.areLightsOn(device); // SHOULD be false
+						log(`set light on cache to ${lightsOn[device._address]} for ${device._address}.`);
+					} catch(e) {
+						lightsOn[device._address] = undefined;
+					}
 				}
 			break;
 		}
 	}
 	catch(e) {
-		log(`could not connect to ${device._address}, removing.`);
-		delete devicesById[device._address];
+		log(`could not connect to ${device._address}.`);
+		log(e);
+		// delete devicesById[device._address];
 	}
 }
 

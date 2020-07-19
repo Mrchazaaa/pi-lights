@@ -1,4 +1,7 @@
+const { timeout, TimeoutError } = require('promise-timeout');
 const { Discovery, Control } = require('magic-home');
+
+const promiseTimeout = 10000;
 
 function log(message) {
     console.log(`[Light] ${message}`);
@@ -6,7 +9,17 @@ function log(message) {
 
 async function discoverDevices() {
     log("discovering devices");
-    var devices = (await Discovery.scan(10000)).map(device => new Control(device.address, {ack: Control.ackMask(1), connect_timeout: 5000}));
+    
+    var devices = (await Discovery.scan(10000)).map(
+        device => new Control(
+            device.address, 
+            {
+                ack: Control.ackMask(1), 
+                // connect_timeout: 10000, 
+                log_all_received: true
+            }
+        )
+    );
 
     var devicesById = devices.reduce((a, x) => ({...a, [x._address]: x}), {});
     log(`discovered: ${Object.keys(devicesById)}`);
@@ -22,13 +35,13 @@ async function turnOff(device) {
 }
 
 async function areLightsOn(device) {
-    return await handleConnectionErrors(async device => (await device.queryState()).on, device, `querying state of ${device._address}`);
+    return await handleConnectionErrors(async device => (await device.queryState()).on, device, `querying on state of ${device._address}`);
 }
 
 async function handleConnectionErrors(operation, device, description) {
     try{
         log(description);
-        var response = await operation(device);
+        var response = await timeout(await operation(device), promiseTimeout);
         log(`${description} responded with ${response}`); 
         return response;
     }

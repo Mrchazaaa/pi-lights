@@ -13,7 +13,7 @@ var pins = [
 
 var averageQueue = [];
 
-var averageQueueSize = 1000;
+var averageQueueSize = 10;
 
 var threshhold = 165;
 
