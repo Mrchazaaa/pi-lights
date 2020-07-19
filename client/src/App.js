@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import './App.css';
 import LineChart from './components/LineChart';
 import {
   BrowserRouter as Router,
@@ -34,7 +33,7 @@ function App() {
         <ul>
           {graphNames.map((graphName, i) => {     
             return (
-              <li>
+              <li className="btn-link">
                 <Link to={`/graph/${graphName}`} key={i} >{graphName}</Link>
               </li>
             )})}

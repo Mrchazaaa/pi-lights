@@ -13,9 +13,9 @@ var pins = [
 
 var averageQueue = [];
 
-var averageQueueSize = 10;
+var averageQueueSize = 100;
 
-var threshhold = 165;
+var threshhold = 195;
 
 function log(message) {
     console.log(`[Sensor] ${message}`);

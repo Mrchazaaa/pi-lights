@@ -1,4 +1,3 @@
-  
 /* global Plotly:true */
 
 import React, { useEffect, useState } from 'react'
@@ -49,8 +48,12 @@ function LineChart() {
 	}, [graphName])
 
 	return (
-		<div>
-			<Link to='/'>back</Link>
+		<div style={{height: '100vh'}}>
+	        <ul>
+				<li className="btn-link"><Link to='/'>back</Link></li>
+				<li className="btn-link"><Link onClick={() => fetchFileData(graphName, setdataPoints)} className="btn-link">refresh</Link></li>
+				{/* <li onClick={() => fetchFileData(graphName, setdataPoints)} className="btn-link"><a >refresh</a></li> */}
+			</ul>
 
 			<Plot
 				data={[
@@ -62,7 +65,13 @@ function LineChart() {
 					marker: {color: 'red'},
 				},
 				]}
-				layout={{title: 'Light Levels by Time (UTC)'}}
+				layout={{
+					title: 'Light Levels by Time (UTC)',
+				}}
+				style={{
+					width: '100%', 
+					height: '85%',
+				}}
 			/>
 		</div>
 	);
