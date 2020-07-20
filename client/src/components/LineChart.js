@@ -1,8 +1,9 @@
 /* global Plotly:true */
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
-import createPlotlyComponent from 'react-plotly.js/factory'
+import createPlotlyComponent from 'react-plotly.js/factory';
+import Logs from './Logs';
 
 const Plot = createPlotlyComponent(Plotly);
  
@@ -73,6 +74,7 @@ function LineChart() {
 					height: '85%',
 				}}
 			/>
+			<Logs/>
 		</div>
 	);
 }

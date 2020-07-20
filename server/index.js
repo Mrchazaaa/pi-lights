@@ -1,16 +1,19 @@
-require('log-timestamp');
+const config = require("config.json");
+const winston = require('winston');
+
+const baseDataFilePath = config["baseLogsFilePath"];
 
 const lightController = require('./light-controller');
 const express = require('express');
 const path = require('path');
 const fileUtiliies = require('./fileUtilities');
 
-const baseDataFilePath = "/home/pi/workspace/lights/server/light-controller/sensor/data";
+require('./light-controller').initialize();
 
 const app = express();
 
 function log(message) {
-    console.log(`[Server] ${message}`);
+    logger.info(`[Server] ${message}`);
 }
 
 // Serve the static files from the React app
