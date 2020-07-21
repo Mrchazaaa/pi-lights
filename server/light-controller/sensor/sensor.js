@@ -3,6 +3,16 @@ var Gpio = require('onoff').Gpio;
 const fs = require('fs')
 const jsonfile = require('jsonfile');
 
+var _logger;
+
+function log(message) {
+    _logger.info(`[Sensor] ${message}`);
+}
+
+function setLogger(logger) {
+    _logger = logger;
+}
+
 var dataDirectoryFilePath;
 
 var pins = [
@@ -16,10 +26,6 @@ var averageQueue = [];
 var averageQueueSize = 100;
 
 var threshhold = 195;
-
-function log(message) {
-    console.log(`[Sensor] ${message}`);
-}
 
 function mean(array) {
     return array.reduce((a, b) => a + b) / array.length;
@@ -112,7 +118,8 @@ async function setDataDirectory(baseDataFilePath) {
 module.exports = {
     getLightLevel,
     isDark,
-    setDataDirectory
+    setDataDirectory,
+    setLogger
 }
 
 ON_DEATH(function(signal, err) {

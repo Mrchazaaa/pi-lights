@@ -1,11 +1,13 @@
 var lights = require('./lights/lights');
 var sensor = require('./sensor/sensor');
 
-var lightsOn = {};
+var _logger;
 
 function log(message) {
-    console.log(`[LightController] ${message}`);
+    _logger.info(`[LightController] ${message}`);
 }
+
+var lightsOn = {};
 
 async function runDeviceLoop(device) {
 	try
@@ -52,7 +54,11 @@ async function runDeviceLoop(device) {
 
 var devicesById = {};
 
-async function pollSensors(baseDataFilePath) {
+async function pollSensors(baseDataFilePath, logger) {
+	_logger = logger;
+	lights.setLogger(logger);
+	sensor.setLogger(logger);
+
 	sensor.setDataDirectory(baseDataFilePath);
 
 	while(true) {

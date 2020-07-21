@@ -1,26 +1,35 @@
-const config = require("config.json");
-const { ExceptionHandler } = require("winston");
+const winston = require('winston');
+const config = require("../config.json");
+require('winston-daily-rotate-file');
 
-const baseLogsFilePath = config["baseDataFilePath"];
+const baseLogsFilePath = config["baseLogsFilePath"];
 
 const rotateTransport = new winston.transports.DailyRotateFile({
     filename: `${baseLogsFilePath}/%DATE%.log`,
     datePattern: 'YYYY-MM-DD',
 });
 
-function initialize() {  
-    const logger = winston.createLogger({
-        level: 'info',
-        transports: [
-            rotateTransport,
-        ],
-    });
+var loggerProvider = {
+    logger: undefined,
+    initialize: function() {
+        loggerProvider.logger = winston.createLogger({
+            level: 'info',
+            transports: [
+                rotateTransport,
+            ],
+        });
+    
+        // logger.add(new winston.transports.Console({
+        //     format: winston.format.simple(),
+        // }));
+    },
+    getLogger: function() {
+        if (loggerProvider.logger == undefined) {
+            throw new Error("Logger is not initialized.");
+        }
 
-    logger.add(new winston.transports.Console({
-        format: winston.format.simple(),
-    }));
-}
+        return loggerProvider.logger;
+    }
+};
 
-module.exports = {
-    initialize
-}
+module.exports = loggerProvider;

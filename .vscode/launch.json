@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/testing.js"
-        }
+        },
         {
             "type": "node",
             "request": "launch",
@@ -20,7 +20,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/index.js"
+            "program": "${workspaceFolder}/server/index.js"
         }
     ]
 }

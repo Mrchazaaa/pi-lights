@@ -1,14 +1,17 @@
-const config = require("config.json");
-const winston = require('winston');
+const config = require("../config.json");
 
-const baseDataFilePath = config["baseLogsFilePath"];
+const baseDataFilePath = config["baseDataFilePath"];
+const baseLogsFilePath = config["baseLogsFilePath"];
 
 const lightController = require('./light-controller');
 const express = require('express');
 const path = require('path');
 const fileUtiliies = require('./fileUtilities');
 
-require('./light-controller').initialize();
+const loggerProvider = require('./loggerProvider');
+loggerProvider.initialize();
+
+const logger = loggerProvider.getLogger();
 
 const app = express();
 
@@ -21,12 +24,18 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('/api/graph/:graphName', (req,res) => {
     var graphName = req.params.graphName;
-    res.json(fileUtiliies.getGraphData(`${baseDataFilePath}/${graphName}.json`));
+    res.json(fileUtiliies.getFile(`${baseDataFilePath}/${graphName}.json`));
     log('Sent graph data.');
 });
 
+app.get('/api/logs/:logName', (req,res) => {
+    var logName = req.params.logName;
+    res.json(fileUtiliies.getFile(`${baseLogsFilePath}/${logName}.log`));
+    log('Sent log data.');
+});
+
 app.get('/api/listdata', (req,res) => {
-    res.json(fileUtiliies.listAvailableData(baseDataFilePath));
+    res.json(fileUtiliies.listAvailableData([baseDataFilePath, baseLogsFilePath]));
     log('Sent list of data files.');
 });
 
@@ -38,5 +47,5 @@ const port = process.env.PORT || 5000;
 app.listen(port);
 log(`App is listening on port ${port}.`);
 
-lightController.pollSensors(baseDataFilePath);
+lightController.pollSensors(baseDataFilePath, logger);
 log('Started polling sensors');

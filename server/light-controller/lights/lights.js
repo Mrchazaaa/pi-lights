@@ -1,10 +1,16 @@
 const { timeout, TimeoutError } = require('promise-timeout');
 const { Discovery, Control } = require('magic-home');
 
-const promiseTimeout = 10000;
+var _logger;
 
 function log(message) {
-    console.log(`[Light] ${message}`);
+    _logger.info(`[Light] ${message}`);
+}
+
+const promiseTimeout = 10000;
+
+function setLogger(logger) {
+    _logger = logger;
 }
 
 async function discoverDevices() {
@@ -54,5 +60,6 @@ module.exports = {
     discoverDevices,
     turnOn,
     turnOff,
-    areLightsOn
+    areLightsOn,
+    setLogger
 }

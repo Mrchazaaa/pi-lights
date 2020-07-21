@@ -1,16 +1,20 @@
 const fs = require('fs');
 
-function listAvailableData(baseDataFilePath) {
-    var files = fs.readdirSync(baseDataFilePath);
+function listAvailableData(directories) {
+    var availableFiles = {};
+    
+    directories.forEach(directoryPath => 
+        fs.readdirSync(directoryPath).forEach(availablePath => 
+            availableFiles[availablePath.replace(/\.json|\.log/gi, "")] = 1));
 
-    return files.map(fileName => fileName.replace(".json", ""));
+    return Object.keys(availableFiles)
 }
 
-function getGraphData(graphDataFilePath) {
+function getFile(graphDataFilePath) {
     return JSON.parse(fs.readFileSync(graphDataFilePath));
 }
 
 module.exports = {
     listAvailableData,
-    getGraphData
+    getFile
 }
