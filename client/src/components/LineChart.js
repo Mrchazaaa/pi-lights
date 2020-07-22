@@ -29,7 +29,7 @@ function formatDataPointsJson(unformattedDataPoints) {
 // Create async function for fetching graph file data
 async function fetchFileData(graphName, setdataPoints) {
 	// Use Fetch API to fetch '/api' endpoint
-	var fileData = await fetch(`/api/graph/${graphName}`)
+	var fileData = await fetch(`/api/data/${graphName}`)
 	.then(res => res.json()) // process incoming data
 	
 	fileData = formatDataPointsJson(fileData);
