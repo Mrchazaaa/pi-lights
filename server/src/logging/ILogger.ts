@@ -1,5 +1,3 @@
-import winston from 'winston';
+import { Logger as ILogger } from 'winston';
 
-export default interface ILogger extends winston.Logger {
-
-}
+export default ILogger;

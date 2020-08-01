@@ -10,23 +10,23 @@ export default class AveragingLightSensorsManager {
     private sensors: LightSensor[];
     private lightLevelThreshold = 195;
     private averageQueueSize: number;
-    private averageQueue: Array<number> = [];
+    private averageQueue: number[] = [];
 
     constructor() {
         this.logger = LoggerFactory.createLogger(AveragingLightSensorsManager.constructor.name);
         this.averageQueueSize = 100;
-        
+
         this.sensors = [
             new LightSensor(4),
             new LightSensor(4),
         ];
     }
 
-    public async isDark(): Promise<Boolean> {
-        // lower value means the detected light is bright 
+    public async isDark(): Promise<boolean> {
+        // lower value means the detected light is bright
         return (this.lightLevelThreshold - await this.getLightLevel()) <= 0;
     }
-    private mean(array: Array<number>): number {
+    private mean(array: number[]): number {
         return (array.reduce((a, b) => a + b)) / array.length;
     }
 
@@ -37,40 +37,40 @@ export default class AveragingLightSensorsManager {
             });
     }
 
-    private appendNewReading(pastReadings: Array<number>): Promise<Array<number>> {
+    private appendNewReading(pastReadings: number[]): Promise<number[]> {
         return new Promise(async (resolve, reject) => {
-            var readingsMean = await this.getAverageSensorReadings();
-        
+            const readingsMean = await this.getAverageSensorReadings();
+
             pastReadings.shift();
             pastReadings.push(readingsMean);
 
             resolve(pastReadings);
         });
     }
-    
+
     private async getLightLevel(): Promise<number> {
-        if (this.averageQueue.length != this.averageQueueSize) {
+        if (this.averageQueue.length !== this.averageQueueSize) {
             this.averageQueue = new Array(this.averageQueueSize).fill(await this.getAverageSensorReadings());
         }
 
         await this.appendNewReading(this.averageQueue);
 
-        var newLightLevel = this.mean(this.averageQueue);
-        
+        const newLightLevel = this.mean(this.averageQueue);
+
         // log new level
-        this.logger.info("got new light level: " + newLightLevel);
+        this.logger.info('got new light level: ' + newLightLevel);
 
         this.logDatum(newLightLevel);
 
         return newLightLevel;
     }
 
-    
-    private logDatum(datum: Number): void {
+
+    private logDatum(datum: number): void {
         try {
-            const filepath = `${config["dataBaseFilePath"]}/${new Date().toISOString().replace(/T.*/, '')}.json`;
-        
-            var data: any = {};
+            const filepath = `${config.dataBaseFilePath}/${new Date().toISOString().replace(/T.*/, '')}.json`;
+
+            let data: any = {};
 
             if (fs.existsSync(filepath)) {
                 data =jsonfile.readFileSync(filepath);

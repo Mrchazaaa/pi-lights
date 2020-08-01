@@ -1,0 +1,4 @@
+{
+    "logsBaseFilePath": "/home/pi/workspace/lights/storage/logs",
+    "dataBaseFilePath": "/home/pi/workspace/lights/storage/data"
+}

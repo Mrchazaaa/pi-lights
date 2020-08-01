@@ -6,30 +6,30 @@ export default class LightSensor {
     private logger: ILogger;
     private GPIO: Gpio;
 
-    constructor(GPIOPIn: number) {
+    constructor(sensorGPIO: number) {
         this.logger = LoggerFactory.createLogger(LightSensor.constructor.name);
-        this.GPIO = new Gpio(GPIOPIn, 'out');
+        this.GPIO = new Gpio(sensorGPIO, 'out');
     }
 
     public getLightReading(): Promise<number> {
         return new Promise(async (resolve, reject) => {
-            var count = 0;
-    
+            let count = 0;
+
             this.GPIO.setDirection('out');
-        
+
             await this.GPIO.write(0);
-            
-            setTimeout(async function() {
-                
-                this.GPIO.setDirection('in');
-                
+
+            setTimeout(async (gpio: Gpio) => {
+
+                gpio.setDirection('in');
+
                 // Count until the pin goes high
-                while (await this.GPIO.read() == 0) {
+                while (await gpio.read() === 0) {
                     count += 1;
                 }
-    
+
                 resolve(count);
-            }, 100);
+            }, 100, this.GPIO);
         });
     }
 

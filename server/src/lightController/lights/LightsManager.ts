@@ -1,33 +1,33 @@
 import LoggerFactory from '../../logging/WinstonLoggerFactory';
 import ILogger from '../../logging/ILogger'
 import Light from './Light'
-const { Discovery } = require('magic-home');
+import { Discovery } from 'magic-home';
 
 export default class LightsManager {
 
 	private logger: ILogger;
-    private lightsCatche = {};
+    private lightsCache: {[index:string]:Light} = {};
 
     constructor() {
 		this.logger = LoggerFactory.createLogger(LightsManager.constructor.name);
     }
 
-    public async discoverDevices() {
-        this.logger.info("Discovering devices.");
+    public async discoverDevices(): Promise<void> {
+        this.logger.info('Discovering devices.');
 
-        (await Discovery.scan(10000)).forEach(function (discoveredDevice: {address: string}) {
-            var light = new Light(discoveredDevice, 10000);
+        (await Discovery.scan(10000)).forEach((discoveredDevice: {address: string}) => {
+            const light = new Light(discoveredDevice, 10000);
             this.lightsCache[discoveredDevice.address] = light;
         });
-    
-        this.logger.info(`discovered: ${Object.keys(this.lightsCatche)}`);
+
+        this.logger.info(`discovered: ${Object.keys(this.lightsCache)}`);
     }
 
     public getLights(): Light[] {
-        return Object.values(this.lightsCatche);
+        return Object.values(this.lightsCache);
     }
 
-    public areAllLightsDiscovered(): Boolean {
-        return Object.keys(this.lightsCatche).length == 2;
+    public areAllLightsDiscovered(): boolean {
+        return Object.keys(this.lightsCache).length === 2;
     }
 }
