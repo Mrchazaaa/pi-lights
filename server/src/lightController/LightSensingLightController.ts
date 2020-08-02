@@ -34,6 +34,7 @@ export default class LightSensingLightController {
 		{
 			if (light.haveLightsBeenTurnedOn() === LightState.Unknown) {
 				await light.areLightsOn();
+				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.haveLightsBeenTurnedOn()}.`);
 			}
 
 			switch(await this.lightSensorsManager.isDark()) {

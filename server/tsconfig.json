@@ -15,16 +15,18 @@
       "resolveJsonModule": true,
       "sourceMap": true,
       "types": [
-        "node"
+        "node",
+        "jest"
       ],
       "typeRoots": [
         "node_modules/@types"
       ]
     },
     "include": [
-      "./src/**/*.ts"
+      "./src/**/*.ts",
+      "./tests/**/*.ts"
     ],
     "exclude": [
-      "./src/public/"
+      "./src/public/",
     ]
   }
