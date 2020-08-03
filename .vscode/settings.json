@@ -1,0 +1,3 @@
+{
+    "jest.pathToJest": "server/node_modules/.bin/jest"
+}

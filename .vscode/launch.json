@@ -7,16 +7,41 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Testing Program",
-            "skipFiles": [
-                "<node_internals>/**"
+            "name": "Jest All",
+            "program": "${workspaceFolder}/server/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--config",
+                "server/jest.config.js"
             ],
-            "program": "${workspaceFolder}/testing.js"
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "windows": {
+                "program": "${workspaceFolder}/server/node_modules/jest/bin/jest",
+            }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Jest Current File",
+            "program": "${workspaceFolder}/server/node_modules/.bin/jest",
+            "args": [
+                "${fileBasenameNoExtension}",
+                "--config",
+                "server/jest.config.js"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "windows": {
+                "program": "${workspaceFolder}/server/node_modules/jest/bin/jest",
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
             "skipFiles": [
                 "<node_internals>/**"
             ],

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 
 export default class FileUtilities {
     public static listDirectoryContents(directories: string[]): string[] {
