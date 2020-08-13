@@ -1,23 +1,12 @@
 import FileUtilities from '../../src/fileUtilities/FileUtilities';
 import fs from 'fs';
 
-jest.mock('fs');
-
-var mockReadFileSync: jest.Mock;
-var mockReaddirSync: jest.Mock;
-
 var fileUtilities;
 
+jest.mock('fs');
+
 beforeEach(() => {
-    mockReadFileSync = fs.readFileSync as jest.Mock;
-    mockReaddirSync = fs.readdirSync as jest.Mock;
-
     fileUtilities = new FileUtilities();
-});
-
-afterEach(() => {
-    mockReadFileSync.mockReset();
-    mockReaddirSync.mockReset();
 });
 
 test('listing directory contents lists contents of directories', () => {
@@ -28,15 +17,16 @@ test('listing directory contents lists contents of directories', () => {
         "folder3": ["file1", "file2", "file3"],
     };
 
-    mockReaddirSync.mockImplementation((folderName: string) => {
-        return testDockStructure[folderName];
+    // mockFS.readdirSync.mockImplementation((folderName: fs.PathLike) => {
+    (fs.readdirSync as jest.Mock).mockImplementation( (path: string) => {
+        return testDockStructure[path.toString()];
     });
 
     var expectedResult = ["file1", "file2", "file3", "file5"];
 
     var result = FileUtilities.listDirectoryContents(['folder1', 'folder2', 'folder3']);
 
-    expect(mockReaddirSync).toBeCalledTimes(3);
+    expect(fs.readdirSync).toBeCalledTimes(3);
     expect(result).toEqual(expectedResult);
 });
 
