@@ -17,7 +17,7 @@ export default class WinstonLoggerFactory {
 
         return Winston.createLogger({
             level: 'info',
-            transports: transports,
+            transports,
             format: combine(
                 label({ label: context }),
                 json()

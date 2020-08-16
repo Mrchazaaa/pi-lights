@@ -47,21 +47,18 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.cachedOnstate()}.`);
 			}
 
-			switch(await this.lightSensorsManager.isDarkAsync()) {
-				case true:
-					this.logger.info('it is dark');
+			if (await this.lightSensorsManager.isDarkAsync()) {
+				this.logger.info('it is dark');
 
-					if (light.cachedOnstate() === LightState.Off) {
-						await light.turnOnAsync();
-					}
-					break;
-				case false:
-					this.logger.info('it is not dark');
+				if (light.cachedOnstate() === LightState.Off) {
+					await light.turnOnAsync();
+				}
+			} else {
+				this.logger.info('it is not dark');
 
-					if (light.cachedOnstate() === LightState.On) {
-						await light.turnOffAsync();
-					}
-				break;
+				if (light.cachedOnstate() === LightState.On) {
+					await light.turnOffAsync();
+				}
 			}
 		}
 		catch(e) {

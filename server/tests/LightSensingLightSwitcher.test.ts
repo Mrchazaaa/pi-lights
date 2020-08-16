@@ -65,3 +65,103 @@ test('Light with unknown state fetches light state.', async () => {
     mockLightWithOnState.verify(l => l.areLightsOnAsync(), Times.never());
     mockLightWithUnknownState.verify(l => l.areLightsOnAsync(), Times.once());
 });
+
+test("When all lights haven't been discovered, lights are discovered.", async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => false);
+
+    mockLightsManager.setup(lm => lm.discoverDevices()).returns(async () => {
+        lightSensingLightSwitch.cancelControlLoop();
+    });
+
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [Mock.ofType<ILight>().object]);
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockLightsManager.verify(lm => lm.discoverDevices(), Times.once());
+});
+
+test('If it is dark, and cached light state is off, lights are turned on.', async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
+
+    const mockLightWithOffState = Mock.ofType<ILight>();
+    mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
+
+    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+        lightSensingLightSwitch.cancelControlLoop();
+        return true;
+    });
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockLightWithOffState.verify(l => l.turnOnAsync(), Times.once());
+});
+
+test('If it is dark, and cached light state is already on, lights are not turned on.', async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
+
+    const mockLightWithOnState = Mock.ofType<ILight>();
+    mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
+
+    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+        lightSensingLightSwitch.cancelControlLoop();
+        return true;
+    });
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockLightWithOnState.verify(l => l.turnOnAsync(), Times.never());
+});
+
+test('If it is light, and cached light state is on, lights are turned off.', async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
+
+    const mockLightWithOnState = Mock.ofType<ILight>();
+    mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
+
+    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+        lightSensingLightSwitch.cancelControlLoop();
+        return false;
+    });
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockLightWithOnState.verify(l => l.turnOffAsync(), Times.once());
+});
+
+test('If it is light, and cached light state is already off, lights are turned not turned off.', async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
+
+    const mockLightWithOffState = Mock.ofType<ILight>();
+    mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
+
+    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+        lightSensingLightSwitch.cancelControlLoop();
+        return false;
+    });
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockLightWithOffState.verify(l => l.turnOffAsync(), Times.never());
+});
+
+test('If light state is unknown, and the light state is unavailable, no action is taken.', async () => {
+    mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
+
+    const mockLightWithUnknownState = Mock.ofType<ILight>();
+    mockLightWithUnknownState.setup(l => l.cachedOnstate()).returns(() => {
+        lightSensingLightSwitch.cancelControlLoop();
+        return LightState.Unknown
+    });
+    mockLightWithUnknownState.setup(l => l.areLightsOnAsync()).throws(new Error("Timout"));
+    mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithUnknownState.object]);
+
+    await lightSensingLightSwitch.runControlLoopAsync();
+
+    mockAveragingLightSensorsManager.verify(m => m.isDarkAsync(), Times.never());
+    mockLightWithUnknownState.verify(l => l.turnOffAsync(), Times.never());
+    mockLightWithUnknownState.verify(l => l.turnOnAsync(), Times.never());
+});
