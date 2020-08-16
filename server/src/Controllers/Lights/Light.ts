@@ -3,7 +3,7 @@ import ILogger from '../../Logging/ILogger'
 import LightState from './LightState';
 import { timeout } from 'promise-timeout';
 import { Control, IControl, IControlState } from 'magic-home';
-import ILight from "./ILight";
+import ILight from './ILight';
 
 export default class Light implements ILight {
 

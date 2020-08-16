@@ -1,4 +1,4 @@
-import LoggerFactory from '../../Logging/WinstonLoggerFactory';
+import LoggerProvider from '../../Logging/LoggerProvider';
 import ILogger from '../../Logging/ILogger'
 import Light from './Light'
 import { Discovery } from 'magic-home';
@@ -9,7 +9,7 @@ export default class LightsManager {
     private lightsCache: {[index:string]:Light} = {};
 
     constructor() {
-		this.logger = LoggerFactory.createLogger(LightsManager.constructor.name);
+		this.logger = LoggerProvider.createLogger(LightsManager.constructor.name);
     }
 
     public async discoverDevices(): Promise<void> {

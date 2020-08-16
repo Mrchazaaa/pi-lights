@@ -1,15 +1,17 @@
 import express from 'express';
 import path from 'path';
-import LightSensingLightController from './LightSensingLightSwitcher';
+import LightSensingLightSwitcher from './LightSensingLightSwitcher';
 import fileUtiliies from './FileUtilities/FileUtilities';
 import config from '../../config.json';
-import LoggerFactory from './Logging/WinstonLoggerFactory';
+import LoggerProvider from './Logging/LoggerProvider';
 import ILogger from './Logging/ILogger'
+import LightsManager from './Controllers/Lights/LightsManager';
+import AveragingLightSensorsManager from './Sensors/LightSensor/AveragingLightSensorsManager';
 
 const dataBaseFilePath = config.dataBaseFilePath;
 const logsBaseFilePath = config.logsBaseFilePath;
 
-const logger: ILogger = LoggerFactory.createLogger('index.ts');
+const logger: ILogger = LoggerProvider.createLogger('index.ts');
 
 const app = express();
 
@@ -41,5 +43,5 @@ const port = process.env.PORT || 5000;
 app.listen(port);
 logger.info(`App is listening on port ${port}.`);
 
-new LightSensingLightController().run();
+new LightSensingLightSwitcher(new LightsManager(), new AveragingLightSensorsManager()).runControlLoopAsync();
 logger.info('Started polling sensors');

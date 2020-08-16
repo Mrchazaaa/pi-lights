@@ -8,7 +8,7 @@ export default class FileUtilities {
             fileNames = fileNames.concat.apply(
                 [], directories.map(directoryPath => fs.readdirSync(directoryPath)));
 
-        } 
+        }
         catch (e) {
             fileNames = [];
         }

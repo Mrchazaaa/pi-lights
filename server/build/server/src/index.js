@@ -3,13 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const express_1 = tslib_1.__importDefault(require("express"));
 const path_1 = tslib_1.__importDefault(require("path"));
-const LightSensingLightController_1 = tslib_1.__importDefault(require("./lightController/LightSensingLightController"));
-const FileUtilities_1 = tslib_1.__importDefault(require("./fileUtilities/FileUtilities"));
+const LightSensingLightSwitcher_1 = tslib_1.__importDefault(require("./LightSensingLightSwitcher"));
+const FileUtilities_1 = tslib_1.__importDefault(require("./FileUtilities/FileUtilities"));
 const config_json_1 = tslib_1.__importDefault(require("../../config.json"));
-const WinstonLoggerFactory_1 = tslib_1.__importDefault(require("./logging/WinstonLoggerFactory"));
+const LoggerProvider_1 = tslib_1.__importDefault(require("./Logging/LoggerProvider"));
+const LightsManager_1 = tslib_1.__importDefault(require("./Controllers/Lights/LightsManager"));
+const AveragingLightSensorsManager_1 = tslib_1.__importDefault(require("./Sensors/LightSensor/AveragingLightSensorsManager"));
 const dataBaseFilePath = config_json_1.default.dataBaseFilePath;
 const logsBaseFilePath = config_json_1.default.logsBaseFilePath;
-const logger = WinstonLoggerFactory_1.default.createLogger('index.ts');
+const logger = LoggerProvider_1.default.createLogger('index.ts');
 const app = express_1.default();
 app.use(express_1.default.static(path_1.default.join(__dirname, '../client/build')));
 app.get('/api/data/:fileName', (req, res) => {
@@ -32,6 +34,6 @@ app.get('*', (req, res) => {
 const port = process.env.PORT || 5000;
 app.listen(port);
 logger.info(`App is listening on port ${port}.`);
-new LightSensingLightController_1.default().run();
+new LightSensingLightSwitcher_1.default(new LightsManager_1.default(), new AveragingLightSensorsManager_1.default()).runControlLoopAsync();
 logger.info('Started polling sensors');
 //# sourceMappingURL=index.js.map

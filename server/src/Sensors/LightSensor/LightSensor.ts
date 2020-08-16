@@ -1,5 +1,5 @@
 import { Gpio } from 'onoff';
-import LoggerFactory from '../../Logging/WinstonLoggerFactory';
+import LoggerProvider from '../../Logging/LoggerProvider';
 import ILogger from '../../Logging/ILogger'
 
 export default class LightSensor {
@@ -7,7 +7,7 @@ export default class LightSensor {
     private GPIO: Gpio;
 
     constructor(sensorGPIO: number) {
-        this.logger = LoggerFactory.createLogger(LightSensor.constructor.name);
+        this.logger = LoggerProvider.createLogger(LightSensor.constructor.name);
         this.GPIO = new Gpio(sensorGPIO, 'out');
     }
 

@@ -6,9 +6,9 @@ const { combine, label, json } = format;
 
 export default class WinstonLoggerFactory {
     private static isDisabled: boolean = false;
-    
+
     public static disableLogging(): void {
-       this.isDisabled = true; 
+       this.isDisabled = true;
     }
 
     public static createLogger(context: string, logsBaseFilePath: string): ILogger  {

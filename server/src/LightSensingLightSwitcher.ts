@@ -21,12 +21,12 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 	}
 
 	public cancelControlLoop() {
-		this.logger.info("Stopping control loop.");
+		this.logger.info('Stopping control loop.');
 		this.shouldControlLoopRun = false;
 	}
-	
+
 	public async runControlLoopAsync() {
-		this.logger.info("Running control loop.");
+		this.logger.info('Running control loop.');
 		this.shouldControlLoopRun = true;
 
 		while(this.shouldControlLoopRun) {

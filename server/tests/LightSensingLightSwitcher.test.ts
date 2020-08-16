@@ -4,9 +4,9 @@ import ILightsManager from '../src/Controllers/Lights/ILightsManager';
 import IAveragingLightSensorsManager from '../src/Sensors/LightSensor/IAveragingLightSensorsManager';
 import ILight from '../src/Controllers/Lights/ILight';
 import LightState from '../src/Controllers/Lights/LightState';
-import {IMock, Mock, Times} from "typemoq"
+import {IMock, Mock, Times} from 'typemoq'
 
-var lightSensingLightSwitch: ILightSensingLightSwitcher;
+let lightSensingLightSwitch: ILightSensingLightSwitcher;
 
 let mockAveragingLightSensorsManager: IMock<IAveragingLightSensorsManager>;
 let mockLightsManager: IMock<ILightsManager>;
@@ -37,7 +37,7 @@ test('Cancel control loop cancels running control loop.', async () => {
         return true
     });
 
-    var mockLight = Mock.ofType<ILight>();
+    const mockLight = Mock.ofType<ILight>();
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLight.object]);
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -46,11 +46,11 @@ test('Cancel control loop cancels running control loop.', async () => {
 test('Light with unknown state fetches light state.', async () => {
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
-    var mockLightWithUnknownState = Mock.ofType<ILight>();
+    const mockLightWithUnknownState = Mock.ofType<ILight>();
     mockLightWithUnknownState.setup(l => l.cachedOnstate()).returns(() => LightState.Unknown);
-    var mockLightWithOnState = Mock.ofType<ILight>();
+    const mockLightWithOnState = Mock.ofType<ILight>();
     mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
-    var mockLightWithOffState = Mock.ofType<ILight>();
+    const mockLightWithOffState = Mock.ofType<ILight>();
     mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object, mockLightWithOnState.object, mockLightWithUnknownState.object]);
 
