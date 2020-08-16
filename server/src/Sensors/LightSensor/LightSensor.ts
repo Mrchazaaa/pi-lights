@@ -1,6 +1,6 @@
 import { Gpio } from 'onoff';
-import LoggerFactory from '../../logging/WinstonLoggerFactory';
-import ILogger from '../../logging/ILogger'
+import LoggerFactory from '../../Logging/WinstonLoggerFactory';
+import ILogger from '../../Logging/ILogger'
 
 export default class LightSensor {
     private logger: ILogger;

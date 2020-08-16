@@ -1,11 +1,12 @@
 import jsonfile from 'jsonfile';
 import fs from 'fs';
 import LightSensor from './LightSensor';
-import LoggerFactory from '../../logging/WinstonLoggerFactory';
-import ILogger from '../../logging/ILogger';
+import LoggerProvider from '../../Logging/LoggerProvider';
+import ILogger from '../../Logging/ILogger';
 import config from '../../../../config.json';
+import IAveragingLightSensorsManager from './IAveragingLightSensorsManager';
 
-export default class AveragingLightSensorsManager {
+export default class AveragingLightSensorsManager implements IAveragingLightSensorsManager {
     private logger: ILogger;
     private sensors: LightSensor[];
     private lightLevelThreshold = 195;
@@ -13,7 +14,7 @@ export default class AveragingLightSensorsManager {
     private averageQueue: number[] = [];
 
     constructor() {
-        this.logger = LoggerFactory.createLogger(AveragingLightSensorsManager.constructor.name);
+        this.logger = LoggerProvider.createLogger(AveragingLightSensorsManager.constructor.name);
         this.averageQueueSize = 100;
 
         this.sensors = [
@@ -22,7 +23,7 @@ export default class AveragingLightSensorsManager {
         ];
     }
 
-    public async isDark(): Promise<boolean> {
+    public async isDarkAsync(): Promise<boolean> {
         // lower value means the detected light is bright
         return (this.lightLevelThreshold - await this.getLightLevel()) <= 0;
     }
@@ -30,16 +31,16 @@ export default class AveragingLightSensorsManager {
         return (array.reduce((a, b) => a + b)) / array.length;
     }
 
-    private getAverageSensorReadings(): Promise<number> {
+    private getAverageSensorReadingsAsync(): Promise<number> {
         return Promise.all(this.sensors.map(sensor => sensor.getLightReading()))
             .then(values => {
                 return this.mean(values);
             });
     }
 
-    private appendNewReading(pastReadings: number[]): Promise<number[]> {
+    private appendNewReadingAsync(pastReadings: number[]): Promise<number[]> {
         return new Promise(async (resolve, reject) => {
-            const readingsMean = await this.getAverageSensorReadings();
+            const readingsMean = await this.getAverageSensorReadingsAsync();
 
             pastReadings.shift();
             pastReadings.push(readingsMean);
@@ -50,10 +51,10 @@ export default class AveragingLightSensorsManager {
 
     private async getLightLevel(): Promise<number> {
         if (this.averageQueue.length !== this.averageQueueSize) {
-            this.averageQueue = new Array(this.averageQueueSize).fill(await this.getAverageSensorReadings());
+            this.averageQueue = new Array(this.averageQueueSize).fill(await this.getAverageSensorReadingsAsync());
         }
 
-        await this.appendNewReading(this.averageQueue);
+        await this.appendNewReadingAsync(this.averageQueue);
 
         const newLightLevel = this.mean(this.averageQueue);
 

@@ -1,10 +1,11 @@
-import LoggerFactory from '../../logging/WinstonLoggerFactory';
-import ILogger from '../../logging/ILogger'
-import { LightState } from './LightState';
+import LoggerProvider from '../../Logging/LoggerProvider';
+import ILogger from '../../Logging/ILogger'
+import LightState from './LightState';
 import { timeout } from 'promise-timeout';
 import { Control, IControl, IControlState } from 'magic-home';
+import ILight from "./ILight";
 
-export default class Light {
+export default class Light implements ILight {
 
     private logger: ILogger;
     private lightControl: IControl;
@@ -13,7 +14,7 @@ export default class Light {
     public address: string;
 
     constructor(light: {address: string}, promiseTimeout: number) {
-		this.logger = LoggerFactory.createLogger(Light.constructor.name);
+		this.logger = LoggerProvider.createLogger(Light.constructor.name);
         this.promiseTimeout = promiseTimeout;
         this.cachedOnState = LightState.Unknown;
         this.address = light.address;
@@ -28,11 +29,11 @@ export default class Light {
         );
     }
 
-    public haveLightsBeenTurnedOn() {
+    public cachedOnstate(): LightState {
         return this.cachedOnState;
     }
 
-    public async turnOn() {
+    public async turnOnAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => (await device.turnOn()), `Turning on ${this.lightControl._address}.`);
 
         this.cachedOnState = result ? LightState.On : LightState.Off;
@@ -40,7 +41,7 @@ export default class Light {
         return result;
     }
 
-    public async turnOff(): Promise<boolean> {
+    public async turnOffAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => (await device.turnOff()), `Turning off ${this.lightControl._address}.`);
 
         this.cachedOnState = result ? LightState.Off : LightState.On;
@@ -48,7 +49,7 @@ export default class Light {
         return result;
     }
 
-    public async areLightsOn(): Promise<boolean> {
+    public async areLightsOnAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors<IControlState>(async (device: typeof Control) => (await device.queryState()), `Querying on state of ${this.lightControl._address}.`);
 
         this.cachedOnState = result.on ? LightState.On : LightState.Off;

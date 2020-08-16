@@ -1,10 +1,10 @@
 import express from 'express';
 import path from 'path';
-import LightSensingLightController from './lightController/LightSensingLightController';
-import fileUtiliies from './fileUtilities/FileUtilities';
+import LightSensingLightController from './LightSensingLightSwitcher';
+import fileUtiliies from './FileUtilities/FileUtilities';
 import config from '../../config.json';
-import LoggerFactory from './logging/WinstonLoggerFactory';
-import ILogger from './logging/ILogger'
+import LoggerFactory from './Logging/WinstonLoggerFactory';
+import ILogger from './Logging/ILogger'
 
 const dataBaseFilePath = config.dataBaseFilePath;
 const logsBaseFilePath = config.logsBaseFilePath;

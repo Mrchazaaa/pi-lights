@@ -1,5 +1,5 @@
-import LoggerFactory from '../../logging/WinstonLoggerFactory';
-import ILogger from '../../logging/ILogger'
+import LoggerFactory from '../../Logging/WinstonLoggerFactory';
+import ILogger from '../../Logging/ILogger'
 import Light from './Light'
 import { Discovery } from 'magic-home';
 

@@ -4,8 +4,14 @@ export default class FileUtilities {
     public static listDirectoryContents(directories: string[]): string[] {
         let fileNames: string[] = [];
 
-        fileNames = fileNames.concat.apply(
-            [], directories.map(directoryPath => fs.readdirSync(directoryPath)));
+        try {
+            fileNames = fileNames.concat.apply(
+                [], directories.map(directoryPath => fs.readdirSync(directoryPath)));
+
+        } 
+        catch (e) {
+            fileNames = [];
+        }
 
         fileNames = fileNames.map((fileName: string) => fileName.replace(/\.json|\.log/gi, ''));
 
