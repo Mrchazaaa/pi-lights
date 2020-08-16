@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import LightSensingLightSwitcher from './LightSensingLightSwitcher';
 import fileUtiliies from './FileUtilities/FileUtilities';
-import config from '../../config.json';
+import * as config from '../../config.js';
 import LoggerProvider from './Logging/LoggerProvider';
 import ILogger from './Logging/ILogger'
 import LightsManager from './Controllers/Lights/LightsManager';

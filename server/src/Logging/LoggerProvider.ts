@@ -1,4 +1,4 @@
-import Config from '../../../config.json';
+import Config from '../../../config.js';
 import ILogger from './ILogger';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
 

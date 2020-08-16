@@ -13,22 +13,28 @@ export default class WinstonLoggerFactory {
 
     public static createLogger(context: string, logsBaseFilePath: string): ILogger  {
 
-        const rotateTransport = new Winston.transports.DailyRotateFile({
-            filename: `${logsBaseFilePath}/%DATE%.log`,
-            datePattern: 'YYYY-MM-DD',
-        });
-
-        rotateTransport.silent = WinstonLoggerFactory.isDisabled;
+        const transports = [this.isDisabled ? this.createDummyTransport() : this.createDailyRotateTransport(logsBaseFilePath)];
 
         return Winston.createLogger({
             level: 'info',
-            transports: [
-                rotateTransport
-            ],
+            transports: transports,
             format: combine(
                 label({ label: context }),
                 json()
             )
+        });
+    }
+
+    private static createDummyTransport(): Winston.transport {
+        return new Winston.transports.Console({
+            silent: true
+        });
+    }
+
+    private static createDailyRotateTransport(logsBaseFilePath: string): Winston.transport {
+        return new Winston.transports.DailyRotateFile({
+            filename: `${logsBaseFilePath}/%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
         });
     }
 }

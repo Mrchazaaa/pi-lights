@@ -3,7 +3,7 @@ import fs from 'fs';
 import LightSensor from './LightSensor';
 import LoggerProvider from '../../Logging/LoggerProvider';
 import ILogger from '../../Logging/ILogger';
-import config from '../../../../config.json';
+import config from '../../../../config.js';
 import IAveragingLightSensorsManager from './IAveragingLightSensorsManager';
 
 export default class AveragingLightSensorsManager implements IAveragingLightSensorsManager {

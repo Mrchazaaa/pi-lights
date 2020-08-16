@@ -1,4 +1,0 @@
-{
-    "logsBaseFilePath": "${workspaceRoot}/lights/storage/logs",
-    "dataBaseFilePath": "${workspaceRoot}/lights/storage/data"
-}
