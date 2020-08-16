@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Mrchazaaa/pi-lights.svg?branch=master)](https://travis-ci.com/Mrchazaaa/pi-lights)
+
 sudo systemctl start light-control
 sudo systemctl status light-control
 sudo systemctl stop light-control
