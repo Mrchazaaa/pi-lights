@@ -47,11 +47,11 @@ test('Light with unknown state fetches light state.', async () => {
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithUnknownState = Mock.ofType<ILight>();
-    mockLightWithUnknownState.setup(l => l.cachedOnstate()).returns(() => LightState.Unknown);
+    mockLightWithUnknownState.setup(l => l.getCachedOnState()).returns(() => LightState.Unknown);
     const mockLightWithOnState = Mock.ofType<ILight>();
-    mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
+    mockLightWithOnState.setup(l => l.getCachedOnState()).returns(() => LightState.On);
     const mockLightWithOffState = Mock.ofType<ILight>();
-    mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
+    mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object, mockLightWithOnState.object, mockLightWithUnknownState.object]);
 
     mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
@@ -84,7 +84,7 @@ test('If it is dark, and cached light state is off, lights are turned on.', asyn
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithOffState = Mock.ofType<ILight>();
-    mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
+    mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
 
     mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
@@ -101,7 +101,7 @@ test('If it is dark, and cached light state is already on, lights are not turned
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithOnState = Mock.ofType<ILight>();
-    mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
+    mockLightWithOnState.setup(l => l.getCachedOnState()).returns(() => LightState.On);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
 
     mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
@@ -118,7 +118,7 @@ test('If it is light, and cached light state is on, lights are turned off.', asy
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithOnState = Mock.ofType<ILight>();
-    mockLightWithOnState.setup(l => l.cachedOnstate()).returns(() => LightState.On);
+    mockLightWithOnState.setup(l => l.getCachedOnState()).returns(() => LightState.On);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
 
     mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
@@ -135,7 +135,7 @@ test('If it is light, and cached light state is already off, lights are turned n
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithOffState = Mock.ofType<ILight>();
-    mockLightWithOffState.setup(l => l.cachedOnstate()).returns(() => LightState.Off);
+    mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
 
     mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
@@ -152,7 +152,7 @@ test('If light state is unknown, and the light state is unavailable, no action i
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => true);
 
     const mockLightWithUnknownState = Mock.ofType<ILight>();
-    mockLightWithUnknownState.setup(l => l.cachedOnstate()).returns(() => {
+    mockLightWithUnknownState.setup(l => l.getCachedOnState()).returns(() => {
         lightSensingLightSwitch.cancelControlLoop();
         return LightState.Unknown
     });

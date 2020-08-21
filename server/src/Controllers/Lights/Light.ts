@@ -29,12 +29,12 @@ export default class Light implements ILight {
         );
     }
 
-    public cachedOnstate(): LightState {
+    public getCachedOnState() {
         return this.cachedOnState;
     }
 
     public async turnOnAsync(): Promise<boolean> {
-        const result = await this.handleConnectionErrors(async (device: typeof Control) => (await device.turnOn()), `Turning on ${this.lightControl._address}.`);
+        const result = await this.handleConnectionErrors(async (device: IControl) => await device.turnOn(), `Turning on ${this.lightControl._address}.`);
 
         this.cachedOnState = result ? LightState.On : LightState.Off;
 
@@ -57,7 +57,7 @@ export default class Light implements ILight {
         return result.on;
     }
 
-    private async handleConnectionErrors<TReturn>(operation: (lightControl: typeof Control) => Promise<TReturn>, description: string): Promise<TReturn> {
+    private async handleConnectionErrors<TReturn>(operation: (lightControl: IControl) => Promise<TReturn>, description: string): Promise<TReturn> {
         try{
             this.logger.info(description);
             const response = await timeout<TReturn>(operation(this.lightControl), this.promiseTimeout);

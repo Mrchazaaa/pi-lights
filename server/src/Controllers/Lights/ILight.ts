@@ -3,7 +3,7 @@ import LightState from './LightState';
 export default interface ILight {
     address: string;
 
-    cachedOnstate(): LightState;
+    getCachedOnState(): LightState;
 
     turnOnAsync(): Promise<boolean>;
 

@@ -21,9 +21,9 @@ declare module "magic-home" {
         }): IControl;
 
         ackMask(mask: number): IAckMask;
-        turnOn(): boolean;
-        turnOff(): boolean;
-        queryState(): IControlState 
+        turnOn(): Promise<boolean>;
+        turnOff(): Promise<boolean>;
+        queryState(): Promise<IControlState>;
         _address: string;
     }
 

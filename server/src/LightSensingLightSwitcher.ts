@@ -42,21 +42,21 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 	private async controlLightAsync(light: ILight) : Promise<void> {
 		try
 		{
-			if (light.cachedOnstate() === LightState.Unknown) {
+			if (light.getCachedOnState() === LightState.Unknown) {
 				await light.areLightsOnAsync();
-				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.cachedOnstate()}.`);
+				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.getCachedOnState()}.`);
 			}
 
 			if (await this.lightSensorsManager.isDarkAsync()) {
 				this.logger.info('it is dark');
 
-				if (light.cachedOnstate() === LightState.Off) {
+				if (light.getCachedOnState() === LightState.Off) {
 					await light.turnOnAsync();
 				}
 			} else {
 				this.logger.info('it is not dark');
 
-				if (light.cachedOnstate() === LightState.On) {
+				if (light.getCachedOnState() === LightState.On) {
 					await light.turnOffAsync();
 				}
 			}
