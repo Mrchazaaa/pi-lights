@@ -36,7 +36,7 @@ export default class Light implements ILight {
     public async turnOnAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: IControl) => await device.turnOn(), `Turning on ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.On : LightState.Off;
+        this.cachedOnState = result ? LightState.On : LightState.Unknown;
 
         return result;
     }
@@ -44,7 +44,7 @@ export default class Light implements ILight {
     public async turnOffAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => (await device.turnOff()), `Turning off ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.Off : LightState.On;
+        this.cachedOnState = result ? LightState.Off : LightState.Unknown;
 
         return result;
     }
@@ -65,6 +65,8 @@ export default class Light implements ILight {
             return response;
         }
         catch(e) {
+            this.logger.error(e);
+            this.cachedOnState = LightState.Unknown;
             throw e;
         }
     }
