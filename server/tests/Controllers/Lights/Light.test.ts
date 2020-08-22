@@ -4,6 +4,7 @@ import ILight from '../../../src/Controllers/Lights/ILight';
 import { Control, IControl } from 'magic-home';
 
 jest.mock('magic-home');
+
 Control.ackMask = jest.fn();
 
 let light: ILight;
@@ -27,10 +28,14 @@ describe('Light tests', () => {
     });
 
     test('Getting lights cached on state returns true if the last operation was turn on.', async () => {
-        const mockedControlInstance = (((Control as unknown) as jest.Mock).mock.instances[0]) as jest.Mocked<IControl>
+        const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.turnOn.mockResolvedValue(true);
         await light.turnOnAsync();
         mockedControlInstance.queryState.mockResolvedValue({ on: false });
         expect(light.getCachedOnState()).toEqual(LightState.On);
     });
 });
+
+function getMockInstances<TValue>(mockedValue: TValue): jest.Mocked<TValue>[] {
+    return ((mockedValue as unknown) as jest.Mock).mock.instances as jest.Mocked<TValue>[];
+}
