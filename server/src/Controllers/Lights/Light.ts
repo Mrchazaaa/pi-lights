@@ -14,7 +14,7 @@ export default class Light implements ILight {
     public address: string;
 
     constructor(address: string, promiseTimeout: number) {
-		this.logger = LoggerProvider.createLogger(Light.constructor.name);
+		this.logger = LoggerProvider.createLogger(Light.name);
         this.promiseTimeout = promiseTimeout;
         this.cachedOnState = LightState.Unknown;
         this.address = address;

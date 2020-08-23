@@ -8,7 +8,7 @@ export default class MeanSensorFilter implements ISensor {
     private averageQueue: number[];
 
     constructor(averageQueueSize: number, sensors: ISensor[]) {
-        this.logger = LoggerProvider.createLogger(MeanSensorFilter.constructor.name);
+        this.logger = LoggerProvider.createLogger(MeanSensorFilter.name);
         this.averageQueueSize = averageQueueSize;
         this.sensors = sensors;
         this.averageQueue = [];

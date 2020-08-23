@@ -15,7 +15,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
     private lightThreshold: number;
 
 	constructor(lightsManager: ILightsManager, meanSensorFilter: ISensor, lightThreshold: number) {
-		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.constructor.name);
+		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.name);
 		this.dataLogger = LoggerProvider.createDataLogger();
 		this.lightsManager = lightsManager;
 		this.meanSensorFilter = meanSensorFilter;

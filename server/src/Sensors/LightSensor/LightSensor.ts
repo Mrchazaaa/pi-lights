@@ -7,7 +7,7 @@ export default class LightSensor implements ISensor {
     private GPIO: Gpio;
 
     constructor(sensorGPIO: number) {
-        this.logger = LoggerProvider.createLogger(LightSensor.constructor.name);
+        this.logger = LoggerProvider.createLogger(LightSensor.name);
         this.GPIO = new Gpio(sensorGPIO, 'out');
     }
 

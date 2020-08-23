@@ -12,7 +12,7 @@ export default class LightsManager implements ILightsManager {
     private lightFactory: ILightFactory;
 
     constructor(discoveryTimeout: number, numberOfLights: number, lightFactory: ILightFactory) {
-        this.logger = LoggerProvider.createLogger(LightsManager.constructor.name);
+        this.logger = LoggerProvider.createLogger(LightsManager.name);
         this.discoveryTimeout = discoveryTimeout;
         this.maxLights = numberOfLights;
         this.lightFactory = lightFactory;
