@@ -1,7 +1,7 @@
 import Light from '../../../src/Controllers/Lights/Light';
 import LightState from '../../../src/Controllers/Lights/LightState';
 import ILight from '../../../src/Controllers/Lights/ILight';
-import { Control, IControl } from 'magic-home';
+import { Control } from 'magic-home';
 
 jest.mock('magic-home');
 
@@ -9,10 +9,11 @@ let light: ILight;
 let dummyAddress: string = "69.69.69.69";
 let dummyTimeout: number = 1500;
 
+jest.fn
 
-describe('Light tests', () => {
+describe('tests for Light.ts', () => {
     beforeEach(() => {
-        light = new Light({address: dummyAddress}, dummyTimeout);
+        light = new Light(dummyAddress, dummyTimeout);
     });
 
     afterEach(() => {
@@ -86,7 +87,7 @@ describe('Light tests', () => {
         expect(light.getCachedOnState()).toEqual(LightState.Off);
     });
 
-    test.only('When light request exceeds timeout, error is thrown', async () => {
+    test('When light request exceeds timeout, error is thrown', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
 
         mockedControlInstance.turnOn.mockImplementation(() => {

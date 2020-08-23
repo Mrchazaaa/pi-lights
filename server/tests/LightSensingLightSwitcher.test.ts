@@ -1,21 +1,22 @@
 import LightSensingLightSwitcher from '../src/LightSensingLightSwitcher';
 import ILightSensingLightSwitcher from '../src/ILightSensingLightSwitcher';
 import ILightsManager from '../src/Controllers/Lights/ILightsManager';
-import IAveragingLightSensorsManager from '../src/Sensors/LightSensor/IAveragingLightSensorsManager';
 import ILight from '../src/Controllers/Lights/ILight';
+import ISensor from '../src/Sensors/ISensor';
 import LightState from '../src/Controllers/Lights/LightState';
 import {IMock, Mock, Times} from 'typemoq'
 
 let lightSensingLightSwitch: ILightSensingLightSwitcher;
 
-let mockAveragingLightSensorsManager: IMock<IAveragingLightSensorsManager>;
+let mockMeanSensorFilter: IMock<ISensor>;
 let mockLightsManager: IMock<ILightsManager>;
+let dummyThreshhold = 195;
 
 beforeEach(() => {
-    mockAveragingLightSensorsManager = Mock.ofType<IAveragingLightSensorsManager>();
+    mockMeanSensorFilter = Mock.ofType<ISensor>();
     mockLightsManager = Mock.ofType<ILightsManager>();
 
-    lightSensingLightSwitch = new LightSensingLightSwitcher(mockLightsManager.object, mockAveragingLightSensorsManager.object);
+    lightSensingLightSwitch = new LightSensingLightSwitcher(mockLightsManager.object, mockMeanSensorFilter.object, dummyThreshhold);
 });
 
 afterEach(() => {
@@ -25,7 +26,7 @@ afterEach(() => {
 test('Cancelling not started control loop does nothing.', () => {
     lightSensingLightSwitch.cancelControlLoop();
 
-    mockAveragingLightSensorsManager.verify(e => e.isDarkAsync(), Times.never());
+    mockMeanSensorFilter.verify(e => e.getReadingAsync(), Times.never());
     mockLightsManager.verify(e => e.areAllLightsDiscovered(), Times.never());
     mockLightsManager.verify(e => e.discoverDevices(), Times.never());
     mockLightsManager.verify(e => e.getLights(), Times.never());
@@ -54,9 +55,9 @@ test('Light with unknown state fetches light state.', async () => {
     mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object, mockLightWithOnState.object, mockLightWithUnknownState.object]);
 
-    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+    setRoomAsDark(false);
+    mockMeanSensorFilter.setup(m => m.getReadingAsync()).callback(() => {
         lightSensingLightSwitch.cancelControlLoop();
-        return false;
     });
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -66,7 +67,7 @@ test('Light with unknown state fetches light state.', async () => {
     mockLightWithUnknownState.verify(l => l.areLightsOnAsync(), Times.once());
 });
 
-test("When all lights haven't been discovered, lights are discovered.", async () => {
+test.only("When all lights haven't been discovered, lights are discovered.", async () => {
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => false);
 
     mockLightsManager.setup(lm => lm.discoverDevices()).returns(async () => {
@@ -87,9 +88,9 @@ test('If it is dark, and cached light state is off, lights are turned on.', asyn
     mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
 
-    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+    setRoomAsDark(true);
+    mockMeanSensorFilter.setup(m => m.getReadingAsync()).callback(() => {
         lightSensingLightSwitch.cancelControlLoop();
-        return true;
     });
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -104,9 +105,9 @@ test('If it is dark, and cached light state is already on, lights are not turned
     mockLightWithOnState.setup(l => l.getCachedOnState()).returns(() => LightState.On);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
 
-    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+    setRoomAsDark(true);
+    mockMeanSensorFilter.setup(m => m.getReadingAsync()).callback(() => {
         lightSensingLightSwitch.cancelControlLoop();
-        return true;
     });
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -121,9 +122,9 @@ test('If it is light, and cached light state is on, lights are turned off.', asy
     mockLightWithOnState.setup(l => l.getCachedOnState()).returns(() => LightState.On);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOnState.object]);
 
-    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+    setRoomAsDark(false);
+    mockMeanSensorFilter.setup(m => m.getReadingAsync()).callback(() => {
         lightSensingLightSwitch.cancelControlLoop();
-        return false;
     });
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -138,9 +139,9 @@ test('If it is light, and cached light state is already off, lights are turned n
     mockLightWithOffState.setup(l => l.getCachedOnState()).returns(() => LightState.Off);
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithOffState.object]);
 
-    mockAveragingLightSensorsManager.setup(m => m.isDarkAsync()).returns(async () => {
+    setRoomAsDark(false);
+    mockMeanSensorFilter.setup(m => m.getReadingAsync()).callback(() => {
         lightSensingLightSwitch.cancelControlLoop();
-        return false;
     });
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -161,7 +162,13 @@ test('If light state is unknown, and the light state is unavailable, no action i
 
     await lightSensingLightSwitch.runControlLoopAsync();
 
-    mockAveragingLightSensorsManager.verify(m => m.isDarkAsync(), Times.never());
+    mockMeanSensorFilter.verify(m => m.getReadingAsync(), Times.never());
     mockLightWithUnknownState.verify(l => l.turnOffAsync(), Times.never());
     mockLightWithUnknownState.verify(l => l.turnOnAsync(), Times.never());
 });
+
+function setRoomAsDark(dark: boolean) {
+    mockMeanSensorFilter.setup(x => x.getReadingAsync()).returns(() => { 
+        return new Promise(res => res( dark ? dummyThreshhold+1 : dummyThreshhold - 1))
+    });
+}

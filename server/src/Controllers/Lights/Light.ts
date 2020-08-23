@@ -13,17 +13,16 @@ export default class Light implements ILight {
     private cachedOnState: LightState;
     public address: string;
 
-    constructor(light: {address: string}, promiseTimeout: number) {
+    constructor(address: string, promiseTimeout: number) {
 		this.logger = LoggerProvider.createLogger(Light.constructor.name);
         this.promiseTimeout = promiseTimeout;
         this.cachedOnState = LightState.Unknown;
-        this.address = light.address;
+        this.address = address;
 
         this.lightControl = new Control(
-            light.address,
+            address,
             {
                 ack: Control.ackMask(1),
-                // connect_timeout: 10000,
                 log_all_received: true
             }
         );

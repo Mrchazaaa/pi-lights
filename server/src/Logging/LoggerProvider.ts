@@ -15,3 +15,5 @@ export default class LoggerProvider {
         return WinstonLoggerFactory.createLogger(context, logsBaseFilePath);
     }
 }
+
+export { ILogger };

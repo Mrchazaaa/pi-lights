@@ -1,8 +1,8 @@
 import { Gpio } from 'onoff';
-import LoggerProvider from '../../Logging/LoggerProvider';
-import ILogger from '../../Logging/ILogger'
+import ISensor from '../ISensor';
+import LoggerProvider, { ILogger } from '../../Logging/LoggerProvider';
 
-export default class LightSensor {
+export default class LightSensor implements ISensor {
     private logger: ILogger;
     private GPIO: Gpio;
 
@@ -11,7 +11,7 @@ export default class LightSensor {
         this.GPIO = new Gpio(sensorGPIO, 'out');
     }
 
-    public getLightReading(): Promise<number> {
+    public getReadingAsync(): Promise<number> {
         return new Promise(async (resolve, reject) => {
             let count = 0;
 

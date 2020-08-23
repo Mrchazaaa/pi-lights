@@ -1,6 +1,10 @@
 declare module "magic-home" {
+    interface IDeviceOptions {
+        address: string
+    }
+
     interface IDiscovery {
-        scan(timeout: number): {address: string}[];
+        scan(timeout: number): IDeviceOptions[];
     }
 
     interface IControlState {

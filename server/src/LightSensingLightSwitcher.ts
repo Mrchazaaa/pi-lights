@@ -2,22 +2,24 @@ import LoggerProvider from './Logging/LoggerProvider';
 import ILogger from './Logging/ILogger'
 import ILightsManager from './Controllers/Lights/ILightsManager';
 import LightState from './Controllers/Lights/LightState';
-import IAveragingLightSensorsManager from './Sensors/LightSensor/IAveragingLightSensorsManager';
 import ILightSensingLightSwitcher from './ILightSensingLightSwitcher';
 import ILight from './Controllers/Lights/ILight';
+import ISensor from './Sensors/ISensor';
 
 export default class LightSensingLightSwitcher implements ILightSensingLightSwitcher {
 
 	private logger: ILogger;
 	private lightsManager: ILightsManager;
-	private lightSensorsManager: IAveragingLightSensorsManager;
-	private shouldControlLoopRun: boolean;
+	private meanSensorFilter: ISensor;
+    private shouldControlLoopRun: boolean;
+    private lightThreshold: number;
 
-	constructor(lightsManager: ILightsManager, averageLightSensorsManager: IAveragingLightSensorsManager) {
+	constructor(lightsManager: ILightsManager, meanSensorFilter: ISensor, lightThreshold: number) {
 		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.constructor.name);
 		this.lightsManager = lightsManager;
-		this.lightSensorsManager = averageLightSensorsManager;
-		this.shouldControlLoopRun = false;
+		this.meanSensorFilter = meanSensorFilter;
+        this.lightThreshold = lightThreshold;
+        this.shouldControlLoopRun = false;
 	}
 
 	public cancelControlLoop() {
@@ -47,7 +49,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.getCachedOnState()}.`);
 			}
 
-			if (await this.lightSensorsManager.isDarkAsync()) {
+			if (await this.isDarkAsync()) {
 				this.logger.info('it is dark');
 
 				if (light.getCachedOnState() === LightState.Off) {
@@ -65,5 +67,9 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 			this.logger.info(`could not connect to ${light.address}.`);
 			this.logger.error(e);
 		}
-	}
+    }
+    
+    private async isDarkAsync(): Promise<boolean> {
+        return (this.lightThreshold - (await this.meanSensorFilter.getReadingAsync())) <= 0;
+    }
 }
