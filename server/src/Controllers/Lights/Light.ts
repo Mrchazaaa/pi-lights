@@ -64,7 +64,7 @@ export default class Light implements ILight {
             return response;
         }
         catch(e) {
-            this.logger.error(e);
+            this.logger.error(e.toString());
             this.cachedOnState = LightState.Unknown;
             throw e;
         }

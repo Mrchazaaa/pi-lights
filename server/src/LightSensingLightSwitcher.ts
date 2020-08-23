@@ -65,9 +65,9 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				}
 			}
 		}
-		catch(e) {
+		catch(error) {
 			this.logger.info(`could not connect to ${light.address}.`);
-			this.logger.error(e);
+			this.logger.error(error.toString());
 		}
     }
 
