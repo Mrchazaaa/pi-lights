@@ -1,16 +1,15 @@
 import LightsManager, { ILightsManager } from '../../../src/Controllers/Lights/LightsManager';
 import LightFactory, { ILightFactory } from '../../../src/Controllers/Lights/LightFactory';
 import { Discovery } from 'magic-home';
-import 'ts-jest';
 
 jest.mock('magic-home');
 jest.mock('../../../src/Controllers/Lights/LightFactory');
 
 let lightsManager: ILightsManager;
-let dummyDiscoverTimeout: number = 500;
-let dummyMaxLights: number = 5;
+const dummyDiscoverTimeout: number = 500;
+const dummyMaxLights: number = 5;
 
-let mockLightFactory: ILightFactory = new LightFactory(10000);
+const mockLightFactory: ILightFactory = new LightFactory(10000);
 
 describe('Tests for LightsManager.', () => {
     beforeEach(() => {
@@ -30,10 +29,10 @@ describe('Tests for LightsManager.', () => {
     });
 
     test('Gettings lights gets discovered lights.', async () => {
-        const dummyAddresses = ["num1", "num2"];
+        const dummyAddresses = ['num1', 'num2'];
         Discovery.scan = jest.fn().mockResolvedValue(dummyAddresses.map(x => { return { address: x } }));
 
-        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address: address } } });
+        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
         await lightsManager.discoverDevices();
         const result = lightsManager.getLights();
@@ -46,10 +45,10 @@ describe('Tests for LightsManager.', () => {
     });
 
     test('Are all lights discovered returns false if not max lights have been discovered.', async () => {
-        const dummyAddresses = Array(dummyMaxLights + 1).fill("a").map((_, index) => index);
+        const dummyAddresses = Array(dummyMaxLights + 1).fill('a').map((_, index) => index);
         Discovery.scan = jest.fn().mockResolvedValue(dummyAddresses.map(x => { return { address: x } }));
 
-        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address: address } } });
+        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
         await lightsManager.discoverDevices();
 
@@ -57,10 +56,10 @@ describe('Tests for LightsManager.', () => {
     });
 
     test('Are all lights discovered returns true if max lights have been discovered.', async () => {
-        const dummyAddresses = new Array(dummyMaxLights).fill("a").map((_, index) => index);
+        const dummyAddresses = new Array(dummyMaxLights).fill('a').map((_, index) => index);
         Discovery.scan = jest.fn().mockResolvedValue(dummyAddresses.map(x => { return { address: x } }));
 
-        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address: address } } });
+        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
         await lightsManager.discoverDevices();
 

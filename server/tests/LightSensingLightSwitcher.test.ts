@@ -10,7 +10,7 @@ let lightSensingLightSwitch: ILightSensingLightSwitcher;
 
 let mockMeanSensorFilter: IMock<ISensor>;
 let mockLightsManager: IMock<ILightsManager>;
-let dummyThreshhold = 195;
+const dummyThreshhold = 195;
 
 beforeEach(() => {
     mockMeanSensorFilter = Mock.ofType<ISensor>();
@@ -67,7 +67,7 @@ test('Light with unknown state fetches light state.', async () => {
     mockLightWithUnknownState.verify(l => l.areLightsOnAsync(), Times.once());
 });
 
-test.only("When all lights haven't been discovered, lights are discovered.", async () => {
+test.only('When all lights haven\'t been discovered, lights are discovered.', async () => {
     mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => false);
 
     mockLightsManager.setup(lm => lm.discoverDevices()).returns(async () => {
@@ -157,7 +157,7 @@ test('If light state is unknown, and the light state is unavailable, no action i
         lightSensingLightSwitch.cancelControlLoop();
         return LightState.Unknown
     });
-    mockLightWithUnknownState.setup(l => l.areLightsOnAsync()).throws(new Error("Timout"));
+    mockLightWithUnknownState.setup(l => l.areLightsOnAsync()).throws(new Error('Timout'));
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithUnknownState.object]);
 
     await lightSensingLightSwitch.runControlLoopAsync();
@@ -168,7 +168,7 @@ test('If light state is unknown, and the light state is unavailable, no action i
 });
 
 function setRoomAsDark(dark: boolean) {
-    mockMeanSensorFilter.setup(x => x.getReadingAsync()).returns(() => { 
+    mockMeanSensorFilter.setup(x => x.getReadingAsync()).returns(() => {
         return new Promise(res => res( dark ? dummyThreshhold+1 : dummyThreshhold - 1))
     });
 }

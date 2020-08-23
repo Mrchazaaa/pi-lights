@@ -1,12 +1,13 @@
 import express from 'express';
 import path from 'path';
 import LightSensingLightSwitcher from './LightSensingLightSwitcher';
-import fileUtiliies from './FileUtilities/FileUtilities';
+import FileUtiliies from './FileUtilities/FileUtilities';
 import * as config from '../../config.js';
-import LoggerProvider from './Logging/LoggerProvider';
-import ILogger from './Logging/ILogger'
+import LoggerProvider, { ILogger } from './Logging/LoggerProvider';
 import LightsManager from './Controllers/Lights/LightsManager';
-import IMeanSensorFilter from './Sensors/MeanSensorFilter';
+import MeanSensorFilter from './Sensors/MeanSensorFilter';
+import LightSensor from './Sensors/LightSensor/LightSensor';
+import LightFactory from './Controllers/Lights/LightFactory';
 
 const dataBaseFilePath = config.dataBaseFilePath;
 const logsBaseFilePath = config.logsBaseFilePath;
@@ -20,18 +21,18 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('/api/data/:fileName', (req, res) => {
     const dataFileName = req.params.fileName;
-    res.json(fileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
+    res.json(FileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
     logger.info('Sent graph data.');
 });
 
 app.get('/api/logs/:fileName', (req,res) => {
     const logsFileName = req.params.fileName;
-    res.json(fileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
+    res.json(FileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
     logger.info('Sent log data.');
 });
 
 app.get('/api/listdata', (req,res) => {
-    res.json(fileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
+    res.json(FileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
     logger.info('Sent list of data files.');
 });
 
@@ -43,5 +44,7 @@ const port = process.env.PORT || 5000;
 app.listen(port);
 logger.info(`App is listening on port ${port}.`);
 
-new LightSensingLightSwitcher(new LightsManager(), new IMeanSensorFilter()).runControlLoopAsync();
+const lightSensors = [new LightSensor(4), new LightSensor(17)];
+
+new LightSensingLightSwitcher(new LightsManager(10000, 2, new LightFactory(10000)), new MeanSensorFilter(100, lightSensors), 195).runControlLoopAsync();
 logger.info('Started polling sensors');

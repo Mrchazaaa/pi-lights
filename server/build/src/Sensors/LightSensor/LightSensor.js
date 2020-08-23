@@ -8,7 +8,7 @@ class LightSensor {
         this.logger = LoggerProvider_1.default.createLogger(LightSensor.constructor.name);
         this.GPIO = new onoff_1.Gpio(sensorGPIO, 'out');
     }
-    getLightReading() {
+    getReadingAsync() {
         return new Promise((resolve, reject) => tslib_1.__awaiter(this, void 0, void 0, function* () {
             let count = 0;
             this.GPIO.setDirection('out');

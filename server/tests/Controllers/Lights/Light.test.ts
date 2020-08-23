@@ -6,10 +6,8 @@ import { Control } from 'magic-home';
 jest.mock('magic-home');
 
 let light: ILight;
-let dummyAddress: string = "69.69.69.69";
-let dummyTimeout: number = 1500;
-
-jest.fn
+const dummyAddress: string = '69.69.69.69';
+const dummyTimeout: number = 1500;
 
 describe('tests for Light.ts', () => {
     beforeEach(() => {
@@ -29,7 +27,7 @@ describe('tests for Light.ts', () => {
     test('Getting lights cached on state returns true if the last operation was turn on.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.turnOn.mockResolvedValue(true);
-        
+
         await light.turnOnAsync();
 
         expect(mockedControlInstance.turnOn).toBeCalledTimes(1);
@@ -40,7 +38,7 @@ describe('tests for Light.ts', () => {
     test('Getting lights cached on state returns false if the last operation was turn off.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.turnOff.mockResolvedValue(true);
-        
+
         await light.turnOffAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(0);
@@ -50,7 +48,7 @@ describe('tests for Light.ts', () => {
     test('Getting lights cached on state returns unknown if turning off lights failed.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.turnOff.mockResolvedValue(false);
-        
+
         await light.turnOffAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(0);
@@ -60,7 +58,7 @@ describe('tests for Light.ts', () => {
     test('Getting lights cached on state returns unknown if turning on lights failed.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.turnOn.mockResolvedValue(false);
-        
+
         await light.turnOnAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(0);
@@ -70,7 +68,7 @@ describe('tests for Light.ts', () => {
     test('Querying lights state when light is on updates cached light state to lights on.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.queryState.mockResolvedValue({ on: true });
-        
+
         await light.areLightsOnAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(1);
@@ -80,7 +78,7 @@ describe('tests for Light.ts', () => {
     test('Querying lights state when light is off updates cached light state to lights off.', async () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.queryState.mockResolvedValue({ on: false });
-        
+
         await light.areLightsOnAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(1);
@@ -95,7 +93,7 @@ describe('tests for Light.ts', () => {
                 setTimeout(() => resolve(true), dummyTimeout*2)
             });
         });
-        
+
         await expect(light.turnOnAsync()).rejects.toThrow()
     });
 });

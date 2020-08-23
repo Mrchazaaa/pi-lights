@@ -1,5 +1,4 @@
-import LoggerProvider from './Logging/LoggerProvider';
-import ILogger from './Logging/ILogger'
+import LoggerProvider, { IDataLogger, ILogger } from './Logging/LoggerProvider';
 import ILightsManager from './Controllers/Lights/ILightsManager';
 import LightState from './Controllers/Lights/LightState';
 import ILightSensingLightSwitcher from './ILightSensingLightSwitcher';
@@ -9,6 +8,7 @@ import ISensor from './Sensors/ISensor';
 export default class LightSensingLightSwitcher implements ILightSensingLightSwitcher {
 
 	private logger: ILogger;
+	private dataLogger: IDataLogger;
 	private lightsManager: ILightsManager;
 	private meanSensorFilter: ISensor;
     private shouldControlLoopRun: boolean;
@@ -16,6 +16,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 
 	constructor(lightsManager: ILightsManager, meanSensorFilter: ISensor, lightThreshold: number) {
 		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.constructor.name);
+		this.dataLogger = LoggerProvider.createDataLogger();
 		this.lightsManager = lightsManager;
 		this.meanSensorFilter = meanSensorFilter;
         this.lightThreshold = lightThreshold;
@@ -68,8 +69,10 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 			this.logger.error(e);
 		}
     }
-    
+
     private async isDarkAsync(): Promise<boolean> {
-        return (this.lightThreshold - (await this.meanSensorFilter.getReadingAsync())) <= 0;
+        const reading = await this.meanSensorFilter.getReadingAsync();
+        this.dataLogger.log(reading);
+        return (this.lightThreshold - reading) <= 0;
     }
 }

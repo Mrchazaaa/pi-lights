@@ -10,14 +10,14 @@ export default class MeanSensorFilter implements ISensor {
     constructor(averageQueueSize: number, sensors: ISensor[]) {
         this.logger = LoggerProvider.createLogger(MeanSensorFilter.constructor.name);
         this.averageQueueSize = averageQueueSize;
-        this.sensors = sensors;        
+        this.sensors = sensors;
         this.averageQueue = [];
     }
 
     public async getReadingAsync(): Promise<number> {
         if (this.averageQueue.length !== this.averageQueueSize) {
             this.averageQueue = Array(this.averageQueueSize);
-            for (var i = 0; i < this.averageQueue.length; i++) {
+            for (let i = 0; i < this.averageQueue.length; i++) {
                 this.averageQueue[i] = await this.getAveragedReadingAsync();
             }
         }
@@ -54,4 +54,4 @@ export default class MeanSensorFilter implements ISensor {
     }
 }
 
-export { ISensor }; 
+export { ISensor };

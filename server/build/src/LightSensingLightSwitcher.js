@@ -4,10 +4,12 @@ const tslib_1 = require("tslib");
 const LoggerProvider_1 = tslib_1.__importDefault(require("./Logging/LoggerProvider"));
 const LightState_1 = tslib_1.__importDefault(require("./Controllers/Lights/LightState"));
 class LightSensingLightSwitcher {
-    constructor(lightsManager, averageLightSensorsManager) {
+    constructor(lightsManager, meanSensorFilter, lightThreshold) {
         this.logger = LoggerProvider_1.default.createLogger(LightSensingLightSwitcher.constructor.name);
+        this.dataLogger = LoggerProvider_1.default.createDataLogger();
         this.lightsManager = lightsManager;
-        this.lightSensorsManager = averageLightSensorsManager;
+        this.meanSensorFilter = meanSensorFilter;
+        this.lightThreshold = lightThreshold;
         this.shouldControlLoopRun = false;
     }
     cancelControlLoop() {
@@ -29,29 +31,34 @@ class LightSensingLightSwitcher {
     controlLightAsync(light) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
-                if (light.cachedOnstate() === LightState_1.default.Unknown) {
+                if (light.getCachedOnState() === LightState_1.default.Unknown) {
                     yield light.areLightsOnAsync();
-                    this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.cachedOnstate()}.`);
+                    this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.getCachedOnState()}.`);
                 }
-                switch (yield this.lightSensorsManager.isDarkAsync()) {
-                    case true:
-                        this.logger.info('it is dark');
-                        if (light.cachedOnstate() === LightState_1.default.Off) {
-                            yield light.turnOnAsync();
-                        }
-                        break;
-                    case false:
-                        this.logger.info('it is not dark');
-                        if (light.cachedOnstate() === LightState_1.default.On) {
-                            yield light.turnOffAsync();
-                        }
-                        break;
+                if (yield this.isDarkAsync()) {
+                    this.logger.info('it is dark');
+                    if (light.getCachedOnState() === LightState_1.default.Off) {
+                        yield light.turnOnAsync();
+                    }
+                }
+                else {
+                    this.logger.info('it is not dark');
+                    if (light.getCachedOnState() === LightState_1.default.On) {
+                        yield light.turnOffAsync();
+                    }
                 }
             }
             catch (e) {
                 this.logger.info(`could not connect to ${light.address}.`);
                 this.logger.error(e);
             }
+        });
+    }
+    isDarkAsync() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const reading = yield this.meanSensorFilter.getReadingAsync();
+            this.dataLogger.log(reading);
+            return (this.lightThreshold - reading) <= 0;
         });
     }
 }

@@ -37,3 +37,5 @@ export default class LightSensor implements ISensor {
         this.GPIO.unexport();
     }
 }
+
+export { ISensor };

@@ -3,7 +3,7 @@ import {IMock, Mock, Times} from 'typemoq'
 
 let meanSensorFilter: ISensor;
 
-let dummyAverageQueueSize: number = 5;
+const dummyAverageQueueSize: number = 5;
 let mockSensors: IMock<ISensor>[];
 
 beforeEach(() => {
@@ -25,10 +25,10 @@ test('Getting reading gets reading from all underlying sensors.', async () => {
 });
 
 test('Getting reading with empty queue gets averaged reading.', async () => {
-    var expectedAverage = 0;
+    let expectedAverage = 0;
 
     mockSensors.forEach((x: IMock<ISensor>, i: number) => {
-        x.setup(s => s.getReadingAsync()).returns(() => { 
+        x.setup(s => s.getReadingAsync()).returns(() => {
             return new Promise(res => res(i))
         });
         expectedAverage += i;
