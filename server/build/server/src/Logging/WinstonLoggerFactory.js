@@ -10,17 +10,22 @@ class WinstonLoggerFactory {
         this.isDisabled = true;
     }
     static createLogger(context, logsBaseFilePath) {
-        const rotateTransport = new winston_1.default.transports.DailyRotateFile({
-            filename: `${logsBaseFilePath}/%DATE%.log`,
-            datePattern: 'YYYY-MM-DD',
-        });
-        rotateTransport.silent = WinstonLoggerFactory.isDisabled;
+        const transports = [this.isDisabled ? this.createDummyTransport() : this.createDailyRotateTransport(logsBaseFilePath)];
         return winston_1.default.createLogger({
             level: 'info',
-            transports: [
-                rotateTransport
-            ],
+            transports,
             format: combine(label({ label: context }), json())
+        });
+    }
+    static createDummyTransport() {
+        return new winston_1.default.transports.Console({
+            silent: true
+        });
+    }
+    static createDailyRotateTransport(logsBaseFilePath) {
+        return new winston_1.default.transports.DailyRotateFile({
+            filename: `${logsBaseFilePath}/%DATE%.log`,
+            datePattern: 'YYYY-MM-DD',
         });
     }
 }

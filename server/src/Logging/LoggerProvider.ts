@@ -1,4 +1,4 @@
-import Config from '../../../config.js';
+import * as Config from '../../../config.json';
 import ILogger from './ILogger';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
 import DataLogger, { IDataLogger } from './DataLogger';

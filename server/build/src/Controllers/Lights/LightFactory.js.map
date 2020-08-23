@@ -1,1 +1,0 @@
-{"version":3,"file":"LightFactory.js","sourceRoot":"","sources":["../../../../src/Controllers/Lights/LightFactory.ts"],"names":[],"mappings":";;;AACA,4DAA4B;AAE5B,MAAqB,YAAY;IAI7B,YAAY,mBAA2B;QACnC,IAAI,CAAC,mBAAmB,GAAG,mBAAmB,CAAC;IACnD,CAAC;IAED,WAAW,CAAC,OAAe;QACvB,OAAO,IAAI,eAAK,CAAC,OAAO,EAAE,IAAI,CAAC,mBAAmB,CAAC,CAAC;IACxD,CAAC;CACJ;AAXD,+BAWC"}

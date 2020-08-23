@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import LightSensingLightSwitcher from './LightSensingLightSwitcher';
 import FileUtiliies from './FileUtilities/FileUtilities';
-import * as config from '../../config.js';
+import * as config from '../../config.json';
 import LoggerProvider, { ILogger } from './Logging/LoggerProvider';
 import LightsManager from './Controllers/Lights/LightsManager';
 import MeanSensorFilter from './Sensors/MeanSensorFilter';
