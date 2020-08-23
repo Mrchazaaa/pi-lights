@@ -62,9 +62,9 @@ test('Light with unknown state fetches light state.', async () => {
 
     await lightSensingLightSwitch.runControlLoopAsync();
 
-    mockLightWithOffState.verify(l => l.areLightsOnAsync(), Times.never());
-    mockLightWithOnState.verify(l => l.areLightsOnAsync(), Times.never());
-    mockLightWithUnknownState.verify(l => l.areLightsOnAsync(), Times.once());
+    mockLightWithOffState.verify(l => l.updateStateCacheAsync(), Times.never());
+    mockLightWithOnState.verify(l => l.updateStateCacheAsync(), Times.never());
+    mockLightWithUnknownState.verify(l => l.updateStateCacheAsync(), Times.once());
 });
 
 test.only('When all lights haven\'t been discovered, lights are discovered.', async () => {
@@ -157,7 +157,7 @@ test('If light state is unknown, and the light state is unavailable, no action i
         lightSensingLightSwitch.cancelControlLoop();
         return LightState.Unknown
     });
-    mockLightWithUnknownState.setup(l => l.areLightsOnAsync()).throws(new Error('Timout'));
+    mockLightWithUnknownState.setup(l => l.updateStateCacheAsync()).throws(new Error('Timout'));
     mockLightsManager.setup(lm => lm.getLights()).returns(() => [mockLightWithUnknownState.object]);
 
     await lightSensingLightSwitch.runControlLoopAsync();

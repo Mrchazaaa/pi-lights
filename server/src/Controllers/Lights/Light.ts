@@ -33,7 +33,7 @@ export default class Light implements ILight {
     }
 
     public async turnOnAsync(): Promise<boolean> {
-        const result = await this.handleConnectionErrors(async (device: IControl) => await device.turnOn(), `Turning on ${this.lightControl._address}.`);
+        const result = await this.handleConnectionErrors(async (device: IControl) => device.turnOn(), `Turning on ${this.lightControl._address}.`);
 
         this.cachedOnState = result ? LightState.On : LightState.Unknown;
 
@@ -41,15 +41,15 @@ export default class Light implements ILight {
     }
 
     public async turnOffAsync(): Promise<boolean> {
-        const result = await this.handleConnectionErrors(async (device: typeof Control) => (await device.turnOff()), `Turning off ${this.lightControl._address}.`);
+        const result = await this.handleConnectionErrors(async (device: typeof Control) => device.turnOff(), `Turning off ${this.lightControl._address}.`);
 
         this.cachedOnState = result ? LightState.Off : LightState.Unknown;
 
         return result;
     }
 
-    public async areLightsOnAsync(): Promise<boolean> {
-        const result = await this.handleConnectionErrors<IControlState>(async (device: typeof Control) => (await device.queryState()), `Querying on state of ${this.lightControl._address}.`);
+    public async updateStateCacheAsync(): Promise<boolean> {
+        const result = await this.handleConnectionErrors<IControlState>(async (device: typeof Control) => device.queryState(), `Querying on state of ${this.lightControl._address}.`);
 
         this.cachedOnState = result.on ? LightState.On : LightState.Off;
 

@@ -16,7 +16,7 @@ export default class DataLogger implements IDataLogger {
         let data: any = {};
 
         if (fs.existsSync(filepath)) {
-            data =jsonfile.readFileSync(filepath);
+            data = jsonfile.readFileSync(filepath);
         }
 
         data[Date.now()] = datum;

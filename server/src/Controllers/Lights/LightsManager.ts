@@ -22,18 +22,19 @@ export default class LightsManager implements ILightsManager {
         this.logger.info('Discovering devices.');
 
         (await Discovery.scan(this.discoveryTimeout)).forEach((deviceOptions: IDeviceOptions) => {
+            this.logger.info(`Discovered: ${deviceOptions.address}`);
             const light = this.lightFactory.createLight(deviceOptions.address);
             this.lightsCache[deviceOptions.address] = light;
         });
-
-        this.logger.info(`discovered: ${Object.keys(this.lightsCache)}`);
     }
 
     public getLights(): ILight[] {
+        this.logger.info('Getting discovered lights.')
         return Object.values(this.lightsCache);
     }
 
     public areAllLightsDiscovered(): boolean {
+        this.logger.info('Verifying if all lights have been discovered.');
         return Object.keys(this.lightsCache).length === this.maxLights;
     }
 }

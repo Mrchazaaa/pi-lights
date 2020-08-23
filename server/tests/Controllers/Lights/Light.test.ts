@@ -69,7 +69,7 @@ describe('tests for Light.ts', () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.queryState.mockResolvedValue({ on: true });
 
-        await light.areLightsOnAsync();
+        await light.updateStateCacheAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(1);
         expect(light.getCachedOnState()).toEqual(LightState.On);
@@ -79,7 +79,7 @@ describe('tests for Light.ts', () => {
         const mockedControlInstance = getMockInstances(Control)[0];
         mockedControlInstance.queryState.mockResolvedValue({ on: false });
 
-        await light.areLightsOnAsync();
+        await light.updateStateCacheAsync();
 
         expect(mockedControlInstance.queryState).toBeCalledTimes(1);
         expect(light.getCachedOnState()).toEqual(LightState.Off);

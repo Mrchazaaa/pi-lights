@@ -1,10 +1,11 @@
-import * as Config from '../../../config.json';
+import { dataBaseFilePath, logsBaseFilePath } from '../../../config.json';
 import ILogger from './ILogger';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
 import DataLogger, { IDataLogger } from './DataLogger';
 
 export default class LoggerProvider {
     private static isDisabled: boolean = false;
+    private static logger: ILogger;
 
     public static disableLogging(): void {
         this.isDisabled = true;
@@ -12,20 +13,16 @@ export default class LoggerProvider {
     }
 
     public static createLogger(context: string): ILogger  {
-        const logsBaseFilePath = Config.logsBaseFilePath;
-
         return WinstonLoggerFactory.createLogger(context, logsBaseFilePath);
     }
 
     public static createDataLogger(): IDataLogger  {
-        const logsBaseFilePath = Config.logsBaseFilePath;
-
         if (this.isDisabled) {
             return {
                log: () => { return; }
             };
         } else {
-            return new DataLogger(logsBaseFilePath);
+            return new DataLogger(dataBaseFilePath);
         }
     }
 }

@@ -37,8 +37,9 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				await this.lightsManager.discoverDevices();
 			}
 
-			this.lightsManager.getLights().forEach(
-				async (light: ILight) => await this.controlLightAsync(light));
+			// this.lightsManager.getLights().forEach(
+            //     async (light: ILight) => await this.controlLightAsync(light));
+            await Promise.all(this.lightsManager.getLights().map(light => this.controlLightAsync(light)));
 		}
 	}
 
@@ -46,8 +47,8 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 		try
 		{
 			if (light.getCachedOnState() === LightState.Unknown) {
-				await light.areLightsOnAsync();
-				this.logger.info(`Initializing light state cache for ${light.address}, haveLightsBeenTurnedOn: ${light.getCachedOnState()}.`);
+				await light.updateStateCacheAsync();
+				this.logger.info(`Initializing light state cache for ${light.address}, as '${light.getCachedOnState()}'.`);
 			}
 
 			if (await this.isDarkAsync()) {
@@ -72,6 +73,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 
     private async isDarkAsync(): Promise<boolean> {
         const reading = await this.meanSensorFilter.getReadingAsync();
+        this.logger.info(`Read new light level '${reading}'.`);
         this.dataLogger.log(reading);
         return (this.lightThreshold - reading) <= 0;
     }

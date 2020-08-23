@@ -28,13 +28,13 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/graph/:graphName" children={<LineChart/>} />
+        <Route path="/data/:graphName" children={<LineChart/>} />
         <Route path="/">
         <ul>
           {graphNames.map((graphName, i) => {     
             return (
               <li className="btn-link">
-                <Link to={`/graph/${graphName}`} key={i} >{graphName}</Link>
+                <Link to={`/data/${graphName}`} key={i} >{graphName}</Link>
               </li>
             )})}
         </ul>

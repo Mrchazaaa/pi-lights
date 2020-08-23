@@ -9,5 +9,5 @@ export default interface ILight {
 
     turnOffAsync(): Promise<boolean>;
 
-    areLightsOnAsync(): Promise<boolean>;
+    updateStateCacheAsync(): Promise<boolean>;
 }

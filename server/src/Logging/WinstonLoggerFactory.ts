@@ -13,15 +13,15 @@ export default class WinstonLoggerFactory {
 
     public static createLogger(context: string, logsBaseFilePath: string): ILogger  {
 
-        const transports = [this.isDisabled ? this.createDummyTransport() : this.createDailyRotateTransport(logsBaseFilePath)];
+        const transport = this.isDisabled ? this.createDummyTransport() : this.createDailyRotateTransport(logsBaseFilePath);
 
         return Winston.createLogger({
             level: 'info',
-            transports,
+            transports: [ transport ],
             format: combine(
                 label({ label: context }),
                 json()
-            )
+            ),
         });
     }
 

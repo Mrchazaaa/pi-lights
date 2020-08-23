@@ -24,8 +24,6 @@ export default class MeanSensorFilter implements ISensor {
 
         const newLightLevel = this.mean(await this.appendNewReadingAsync(this.averageQueue));
 
-        this.logger.info('got new light level: ' + newLightLevel);
-
         return newLightLevel;
     }
 
