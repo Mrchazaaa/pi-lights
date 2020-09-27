@@ -5,8 +5,10 @@ sudo systemctl status light-control
 sudo systemctl stop light-control
 sudo systemctl restart light-control
 
-*used to enable toe service whenever the system boots
+\*used to enable toe service whenever the system boots
 sudo systemctl enable light-control
 
 ![Alt text](graph.png?raw=true "Light Levels Client Graph")
 ![Alt text](pi.jpg?raw=true "Pi Circuitry")
+
+[![Lights Demonstration](VideoImage.png)](https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration")
