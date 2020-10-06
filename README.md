@@ -5,13 +5,14 @@ A linux service running on a Raspberry Pi kept in my room (pictured below). The 
 
 ![Alt text](pi.jpg?raw=true "Pi Circuitry")
 
+Below, you'll find a video demonstration of the lights at work.
+
+<a href='https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration"'><image src="./videoImage.png"></a>
+
 As the project has grown it has come to encompass a wider range of hom automation functionality, including:
 * Alexa welcome message on arrival.
 * Automatic lights-out timer.
 
 To help with debuggng, the Pi includes a web server, built with Express, which serves a React based client displaying day-to-day system logs and light level graphs. A typical light level graph is included below (the blips represent dark conditions simulated for testing, by covering the sensors with an old hat).
 
-Below, you'll also find a video demonstration of the lights at work.
-
-<a href='https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration"'><image src="./videoImage.png" width="50%"></a>
-<image src="./graph.png" width="50%" style="float: right;">
+<image src="./graph.png" style="float: right;">
