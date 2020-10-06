@@ -13,5 +13,5 @@ To help with debuggng, the Pi includes a web server, built with Express, which s
 
 Below, you'll also find a video demonstration of the lights at work.
 
-<a href='https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration"'><image src="./videoImage.png" style="width: calc(50% - 5px)"></a>
-<image src="./graph.png" style="float: right; width: calc(50% - 5px)">
+<a href='https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration"'><image src="./videoImage.png" width="50%"></a>
+<image src="./graph.png" width="50%" style="float: right;">
