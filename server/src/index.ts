@@ -45,4 +45,4 @@ logger.info(`App is listening on port ${port}.`);
 
 const lightSensors = [new LightSensor(4), new LightSensor(17)];
 
-new LightSensingLightSwitcher(new LightsManager(10000, 2, new LightFactory(10000)), new MeanSensorFilter(2000, lightSensors), 195).runControlLoopAsync();
+new LightSensingLightSwitcher(new LightsManager(10000, 2, new LightFactory(10000)), new MeanSensorFilter(2000, lightSensors), 1000).runControlLoopAsync();
