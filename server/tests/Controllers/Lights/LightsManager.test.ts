@@ -13,7 +13,7 @@ const mockLightFactory: ILightFactory = new LightFactory(10000);
 
 describe('Tests for LightsManager.', () => {
     beforeEach(() => {
-        lightsManager = new LightsManager(dummyDiscoverTimeout, dummyMaxLights, mockLightFactory);
+        lightsManager = new LightsManager(dummyDiscoverTimeout, 1000, dummyMaxLights, mockLightFactory);
     });
 
     afterEach(() => {
@@ -23,7 +23,7 @@ describe('Tests for LightsManager.', () => {
     test('Discovering lights discovers lights via magic home discover service.', async () => {
         Discovery.scan = jest.fn().mockResolvedValue([]);
 
-        await lightsManager.discoverDevices();
+        await lightsManager.discoverDevicesAsync();
 
         expect(Discovery.scan).toBeCalledTimes(1);
     });
@@ -34,7 +34,7 @@ describe('Tests for LightsManager.', () => {
 
         mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
-        await lightsManager.discoverDevices();
+        await lightsManager.discoverDevicesAsync();
         const result = lightsManager.getLights();
 
         expect(mockLightFactory.createLight).toBeCalled();
@@ -50,7 +50,7 @@ describe('Tests for LightsManager.', () => {
 
         mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
-        await lightsManager.discoverDevices();
+        await lightsManager.discoverDevicesAsync();
 
         expect(lightsManager.areAllLightsDiscovered()).toBe(false);
     });
@@ -61,7 +61,7 @@ describe('Tests for LightsManager.', () => {
 
         mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
 
-        await lightsManager.discoverDevices();
+        await lightsManager.discoverDevicesAsync();
 
         expect(lightsManager.areAllLightsDiscovered()).toBe(true);
     });

@@ -5,23 +5,27 @@ import ILightSensingLightSwitcher from './ILightSensingLightSwitcher';
 import ILight from './Controllers/Lights/ILight';
 import ISensor from './Sensors/ISensor';
 
+interface TLightData {
+    ambient: number
+}
+
 export default class LightSensingLightSwitcher implements ILightSensingLightSwitcher {
 
 	private logger: ILogger;
 	private dataLogger: IDataLogger;
 	private lightsManager: ILightsManager;
-	private meanSensorFilter: ISensor;
+	private readRateLimitedSensor: ISensor<TLightData>;
     private shouldControlLoopRun: boolean;
     private lightThreshold: number;
 
-	constructor(lightsManager: ILightsManager, meanSensorFilter: ISensor, lightThreshold: number) {
+	constructor(lightsManager: ILightsManager, meanSensorFilter: ISensor<TLightData>, lightThreshold: number) {
 		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.name);
 		this.dataLogger = LoggerProvider.createDataLogger();
 		this.lightsManager = lightsManager;
-		this.meanSensorFilter = meanSensorFilter;
+		this.readRateLimitedSensor = meanSensorFilter;
         this.lightThreshold = lightThreshold;
         this.shouldControlLoopRun = false;
-	}
+    }
 
 	public cancelControlLoop() {
 		this.logger.info('Stopping control loop.');
@@ -29,21 +33,19 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 	}
 
 	public async runControlLoopAsync() {
-		this.logger.info('Running control loop.');
+        this.logger.info('Beginning control loop.');
 		this.shouldControlLoopRun = true;
 
 		while(this.shouldControlLoopRun) {
-			if (!this.lightsManager.areAllLightsDiscovered()) {
-				await this.lightsManager.discoverDevices();
-			}
+            this.logger.info('Running control loop.');
 
-			// this.lightsManager.getLights().forEach(
-            //     async (light: ILight) => await this.controlLightAsync(light));
-            await Promise.all(this.lightsManager.getLights().map(light => this.controlLightAsync(light)));
+            await Promise.all([this.lightsManager.discoverDevicesAsync(), ...(this.lightsManager.getLights().map(light => this.controlLightAsync(light)))]);
 		}
 	}
 
 	private async controlLightAsync(light: ILight) : Promise<void> {
+        this.logger.info(`Controlling light ${light.address}.`);
+
 		try
 		{
 			if (light.getCachedOnState() === LightState.Unknown) {
@@ -52,13 +54,13 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 			}
 
 			if (await this.isDarkAsync()) {
-				this.logger.info('it is dark');
+				this.logger.info('It is dark.');
 
 				if (light.getCachedOnState() === LightState.Off) {
 					await light.turnOnAsync();
 				}
 			} else {
-				this.logger.info('it is not dark');
+				this.logger.info('It is not dark.');
 
 				if (light.getCachedOnState() === LightState.On) {
 					await light.turnOffAsync();
@@ -66,15 +68,25 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 			}
 		}
 		catch(error) {
-			this.logger.info(`could not connect to ${light.address}.`);
-			this.logger.error(error.toString());
+			this.logger.error(`Could not connect to ${light.address}.`);
+            this.logger.error(error.toString());
+            this.lightsManager.removeLight(light.address);
 		}
     }
 
     private async isDarkAsync(): Promise<boolean> {
-        const reading = await this.meanSensorFilter.getReadingAsync();
+        this.logger.info(`Reading new light level.`);
+        const reading = (await this.readRateLimitedSensor.getReadingAsync()).ambient;
         this.logger.info(`Read new light level '${reading}'.`);
         this.dataLogger.log(reading);
-        return (this.lightThreshold - reading) <= 0;
+	return (this.lightThreshold - reading) >= 0;
+    }
+
+    dispose(): void {
+        this.logger.info('Disposing.');
+
+        this.shouldControlLoopRun = false;
+        this.readRateLimitedSensor.dispose();
+        this.lightsManager.dispose();
     }
 }

@@ -1,4 +1,5 @@
-export default interface ISensor {
-    getReadingAsync(): Promise<number>;
-    dispose(): void;
+import IDisposable from './IDisposable';
+
+export default interface ISensor<TResult> extends IDisposable {
+    getReadingAsync(): Promise<TResult>;
 }

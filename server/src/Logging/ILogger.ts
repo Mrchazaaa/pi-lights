@@ -1,3 +1,4 @@
-import { Logger as ILogger } from 'winston';
-
-export default ILogger;
+export default interface ILogger {
+    error: (message: any) => void;
+    info: (message: string) => void;
+}

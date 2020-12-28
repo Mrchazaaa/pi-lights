@@ -6,7 +6,6 @@ import { Control, IControl, IControlState } from 'magic-home';
 import ILight from './ILight';
 
 export default class Light implements ILight {
-
     private logger: ILogger;
     private lightControl: IControl;
     private promiseTimeout: number;
@@ -23,7 +22,7 @@ export default class Light implements ILight {
             address,
             {
                 ack: Control.ackMask(1),
-                log_all_received: true
+                log_all_received: false
             }
         );
     }
@@ -60,7 +59,7 @@ export default class Light implements ILight {
         try{
             this.logger.info(description);
             const response = await timeout<TReturn>(operation(this.lightControl), this.promiseTimeout);
-            this.logger.info(`${description} responded with ${response}`);
+            this.logger.info(`${description} responded with ${JSON.stringify(response)}`);
             return response;
         }
         catch(e) {

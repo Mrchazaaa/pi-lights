@@ -1,9 +1,12 @@
+import IDisposable from 'src/Sensors/IDisposable';
 import ILight from './ILight';
 
-export default interface ILightsManager {
-    discoverDevices(): Promise<void>;
+export default interface ILightsManager extends IDisposable {
+    discoverDevicesAsync(): Promise<void>;
 
     getLights(): ILight[];
 
     areAllLightsDiscovered(): boolean;
+
+    removeLight(lightAddress: string): void;
 }

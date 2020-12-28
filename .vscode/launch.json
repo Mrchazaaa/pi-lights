@@ -45,7 +45,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server/build/server/src/index.js"
+            "program": "${workspaceFolder}/server/build/server/src/index.js",
         }
     ]
 }

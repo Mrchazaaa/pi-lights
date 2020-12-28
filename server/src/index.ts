@@ -1,13 +1,16 @@
 import express from 'express';
-import path from 'path';
 import LightSensingLightSwitcher from './LightSensingLightSwitcher';
 import FileUtiliies from './FileUtilities/FileUtilities';
 import { dataBaseFilePath, logsBaseFilePath, clientBuildPath } from '../../config.json';
 import LoggerProvider, { ILogger } from './Logging/LoggerProvider';
 import LightsManager from './Controllers/Lights/LightsManager';
-import MeanSensorFilter from './Sensors/MeanSensorFilter';
-import LightSensor from './Sensors/LightSensor/LightSensor';
+import SensorReadRateLimitWrapper from './Sensors/SensorReadRateLimitDecorator';
 import LightFactory from './Controllers/Lights/LightFactory';
+import ON_DEATH from 'death';
+import ButtonManager from './ButtonManager';
+import TSL2561 from './Sensors/LightSensor/TSL2561';
+
+process.title = 'piServer';
 
 const logger: ILogger = LoggerProvider.createLogger('index.ts');
 
@@ -43,6 +46,32 @@ const port = process.env.PORT || 5000;
 app.listen(port);
 logger.info(`App is listening on port ${port}.`);
 
-const lightSensors = [new LightSensor(4), new LightSensor(17)];
+const lightsManager = new LightsManager(10000, 10000, 2, new LightFactory(10000));
 
-new LightSensingLightSwitcher(new LightsManager(10000, 2, new LightFactory(10000)), new MeanSensorFilter(2000, lightSensors), 1000).runControlLoopAsync();
+const lightSensingLightSwitcher = new LightSensingLightSwitcher(lightsManager, new SensorReadRateLimitWrapper(500, new TSL2561(2, 16)), 0.3);
+
+// const buttons = new ButtonManager(lightsManager);
+
+ON_DEATH((signal, err) => {
+    console.log('Death.')
+    logger.info('Death.')
+
+    lightSensingLightSwitcher.dispose();
+    // buttons.dispose();
+})
+
+process.on('SIGINT', () => {
+    console.log('SIGINT');
+    lightSensingLightSwitcher.dispose();
+    process.exit(2);
+});
+
+// catch uncaught exceptions, trace, then exit normally
+process.on('uncaughtException', (e) => {
+    console.log('Uncaught Exception...');
+    console.log(e.stack);
+    lightSensingLightSwitcher.dispose();
+    process.exit(99);
+});
+
+lightSensingLightSwitcher.runControlLoopAsync();

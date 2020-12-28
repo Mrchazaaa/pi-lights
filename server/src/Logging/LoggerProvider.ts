@@ -1,29 +1,39 @@
 import { dataBaseFilePath, logsBaseFilePath } from '../../../config.json';
-import ILogger from './ILogger';
+import { Logger } from 'winston';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
 import DataLogger, { IDataLogger } from './DataLogger';
+import ContextAwareLogger, { ILogger } from './ContextAwareLogger';
 
 export default class LoggerProvider {
     private static isDisabled: boolean = false;
-    private static logger: ILogger;
+    private static logger: Logger;
+    private static disabledLogger: Logger;
+    private static dataLogger: DataLogger;
 
     public static disableLogging(): void {
         this.isDisabled = true;
-        WinstonLoggerFactory.disableLogging();
     }
 
     public static createLogger(context: string): ILogger  {
-        return WinstonLoggerFactory.createLogger(context, logsBaseFilePath);
+        if (this.isDisabled) {
+            if (!this.disabledLogger) this.disabledLogger = WinstonLoggerFactory.createDisabledLogger()
+
+            return this.disabledLogger;
+        }
+
+        if (!this.logger) this.logger = WinstonLoggerFactory.createLogger(logsBaseFilePath, this.isDisabled)
+
+        return new ContextAwareLogger(this.logger, context);
     }
 
     public static createDataLogger(): IDataLogger  {
         if (this.isDisabled) {
-            return {
-               log: () => { return; }
-            };
-        } else {
-            return new DataLogger(dataBaseFilePath);
+            return { log: () => { return; } }
         }
+
+        if (!this.dataLogger) this.dataLogger = new DataLogger(dataBaseFilePath);
+
+        return this.dataLogger;
     }
 }
 

@@ -1,26 +1,30 @@
-import ILogger from './ILogger';
 import 'winston-daily-rotate-file';
-import Winston from 'winston';
-const { format } = Winston;
-const { combine, label, json } = format;
+import Winston, { format, Logger } from 'winston';
+const { combine, timestamp, json, prettyPrint } = format;
 
 export default class WinstonLoggerFactory {
-    private static isDisabled: boolean = false;
-
-    public static disableLogging(): void {
-       this.isDisabled = true;
+    public static createLogger(logsBaseFilePath: string, isDisabled: boolean): Logger  {
+        return Winston.createLogger({
+            transports: [ this.createLogsDailyRotateTransport(logsBaseFilePath) ],
+            format: combine(
+                timestamp({ format: 'HH:mm:ss' }),
+                format.printf(info => {
+                    const infoLevel = info.level + ':' + ' '.repeat('error'.length - info.level.length);
+                    return `${info.timestamp} ${infoLevel} ${info.message}`
+                }),
+            ),
+        });
     }
 
-    public static createLogger(context: string, logsBaseFilePath: string): ILogger  {
-
-        const transport = this.isDisabled ? this.createDummyTransport() : this.createDailyRotateTransport(logsBaseFilePath);
-
+    public static createDisabledLogger(): Logger  {
         return Winston.createLogger({
-            level: 'info',
-            transports: [ transport ],
+            transports: [ this.createDummyTransport() ],
             format: combine(
-                label({ label: context }),
-                json()
+                timestamp({ format: 'HH:mm:ss.SSS' }),
+                format.printf(info => {
+                    const infoLevel = info.level + ':' + ' '.repeat('error'.length - info.level.length);
+                    return `${info.timestamp} ${infoLevel} ${info.message}`
+                }),
             ),
         });
     }
@@ -31,7 +35,7 @@ export default class WinstonLoggerFactory {
         });
     }
 
-    private static createDailyRotateTransport(logsBaseFilePath: string): Winston.transport {
+    private static createLogsDailyRotateTransport(logsBaseFilePath: string): Winston.transport {
         return new Winston.transports.DailyRotateFile({
             filename: `${logsBaseFilePath}/%DATE%.log`,
             datePattern: 'YYYY-MM-DD',
