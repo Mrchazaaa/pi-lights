@@ -1,7 +1,6 @@
-import IDisposable from 'src/Sensors/IDisposable';
 import ILight from './ILight';
 
-export default interface ILightsManager extends IDisposable {
+export default interface ILightsManager {
     discoverDevicesAsync(): Promise<void>;
 
     getLights(): ILight[];

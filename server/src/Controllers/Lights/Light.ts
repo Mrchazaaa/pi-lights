@@ -47,6 +47,22 @@ export default class Light implements ILight {
         return result;
     }
 
+    public async setStrobe(): Promise<boolean> {
+        const result = await this.handleConnectionErrors(async (device: typeof Control) => device.setPattern('seven_color_strobe_flash', 100), `Setting strobe pattern for ${this.lightControl._address}.`);
+
+        this.cachedOnState = result ? LightState.On : LightState.Off;
+
+        return result;
+    }
+
+    public async setAmbient(): Promise<boolean> {
+        const result = await this.handleConnectionErrors(async (device: typeof Control) => device.setColor(51, 0, 0), `Setting ambient lighting for ${this.lightControl._address}.`);
+
+        this.cachedOnState = result ? LightState.On : LightState.Off;
+
+        return result;
+    }
+
     public async updateStateCacheAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors<IControlState>(async (device: typeof Control) => device.queryState(), `Querying on state of ${this.lightControl._address}.`);
 
@@ -63,6 +79,7 @@ export default class Light implements ILight {
             return response;
         }
         catch(e) {
+            this.logger.error(`Operation '${description}' failed.`);
             this.logger.error(e.toString());
             this.cachedOnState = LightState.Unknown;
             throw e;

@@ -2,29 +2,24 @@ import LoggerProvider, { ILogger } from '../../Logging/LoggerProvider';
 import ILightsManager from './ILightsManager';
 import ILightFactory, { ILight } from './ILightFactory';
 import { Discovery, IDeviceOptions } from 'magic-home';
-import { getTimeInMilliseconds } from '../../../src/TimingHelper';
+import RateLimitedOperation from '../../Utilities/RateLimitedOperation';
 
 export default class LightsManager implements ILightsManager {
-
 	private logger: ILogger;
     private lightsCache: {[index:string]: ILight} = {};
     private discoveryTimeout: number;
     private maxLights: number;
     private lightFactory: ILightFactory;
-    private discoveryInvocationTimeout: number;
-    private discoveryPromise: Promise<void> | null;
-    private discoveryThresholdTimeout: NodeJS.Timeout | null;
-    private lastDiscoveryTimestamp: number | null;
+    private discoveryOperation: RateLimitedOperation<Promise<void>>;
 
-    constructor(discoveryTimeout: number, discoveryInvocationTimeout: number, numberOfLights: number, lightFactory: ILightFactory) {
+    constructor(discoveryRateLimit: number, numberOfLights: number, lightFactory: ILightFactory) {
         this.logger = LoggerProvider.createLogger(LightsManager.name);
-        this.discoveryTimeout = discoveryTimeout;
+        this.discoveryTimeout = discoveryRateLimit;
         this.maxLights = numberOfLights;
         this.lightFactory = lightFactory;
-        this.discoveryInvocationTimeout = discoveryInvocationTimeout;
-        this.discoveryPromise = null;
-        this.discoveryThresholdTimeout = null;
-        this.lastDiscoveryTimestamp = null;
+        this.discoveryOperation = new RateLimitedOperation<Promise<void>>(
+            (() => this.doDiscoverDevicesAsync()).bind(this),
+            discoveryRateLimit);
     }
 
     public async discoverDevicesAsync(): Promise<void> {
@@ -34,23 +29,7 @@ export default class LightsManager implements ILightsManager {
             return;
         }
 
-        if (!this.lastDiscoveryTimestamp) {
-            this.lastDiscoveryTimestamp = getTimeInMilliseconds();
-        }
-
-        const timeSinceLastInvocation = getTimeInMilliseconds() - this.lastDiscoveryTimestamp;
-        if (timeSinceLastInvocation > this.discoveryInvocationTimeout) {
-            this.logger.info(`Clearing cached discovery after ${timeSinceLastInvocation} ms.`);
-            this.discoveryPromise = null;
-        }
-
-        if (this.discoveryPromise === null) {
-            this.logger.info('Setting cached discovery.');
-            this.discoveryPromise = this.doDiscoverDevicesAsync();
-            this.lastDiscoveryTimestamp = getTimeInMilliseconds();
-        }
-
-        return await this.discoveryPromise;
+        return this.discoveryOperation.execute();
     }
 
     public getLights(): ILight[] {
@@ -72,10 +51,6 @@ export default class LightsManager implements ILightsManager {
             const light = this.lightFactory.createLight(deviceOptions.address);
             this.lightsCache[deviceOptions.address] = light;
         });
-    }
-
-    public dispose(): void {
-        if (this.discoveryThresholdTimeout !== null) clearTimeout(this.discoveryThresholdTimeout)
     }
 }
 

@@ -1,6 +1,6 @@
 import i2c, { PromisifiedBus } from 'i2c-bus';
 import LoggerProvider, { ILogger } from '../../Logging/LoggerProvider';
-import { sleep } from '../../TimingHelper';
+import { sleep } from '../../Utilities/TimingHelper';
 import ISensor from '../ISensor';
 
 interface TReading {
@@ -132,7 +132,6 @@ export default class TSL2561 implements ISensor<TReading> {
 
     public async dispose() {
         this.logger.info('Disposing.');
-
         await (await this.getBus()).close();
     }
 }

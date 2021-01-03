@@ -29,6 +29,8 @@ declare module "magic-home" {
         turnOff(): Promise<boolean>;
         queryState(): Promise<IControlState>;
         _address: string;
+        setPattern(pattern: string, speed: number): Promise<boolean>;
+        setColor(red: number, green: number, blue: number): Promise<boolean>;
     }
 
     export var Discovery: IDiscovery;

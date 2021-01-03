@@ -1,5 +1,4 @@
 import fs from 'fs';
-import jsonfile from 'jsonfile';
 
 export default class FileUtilities {
     public static listDirectoryContents(directories: string[]): string[] {

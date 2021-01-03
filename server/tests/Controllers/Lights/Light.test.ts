@@ -2,6 +2,7 @@ import Light from '../../../src/Controllers/Lights/Light';
 import LightState from '../../../src/Controllers/Lights/LightState';
 import ILight from '../../../src/Controllers/Lights/ILight';
 import { Control } from 'magic-home';
+import getMockInstances from '../../TestUtilities';
 
 jest.mock('magic-home');
 
@@ -9,7 +10,7 @@ let light: ILight;
 const dummyAddress: string = '69.69.69.69';
 const dummyTimeout: number = 1500;
 
-describe('tests for Light.ts', () => {
+describe('Tests for Light.', () => {
     beforeEach(() => {
         light = new Light(dummyAddress, dummyTimeout);
     });
@@ -97,7 +98,3 @@ describe('tests for Light.ts', () => {
         await expect(light.turnOnAsync()).rejects.toThrow()
     });
 });
-
-function getMockInstances<TValue>(mockedValue: TValue): jest.Mocked<TValue>[] {
-    return ((mockedValue as unknown) as jest.Mock).mock.instances as jest.Mocked<TValue>[];
-}

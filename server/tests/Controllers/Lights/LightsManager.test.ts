@@ -1,19 +1,21 @@
 import LightsManager, { ILightsManager } from '../../../src/Controllers/Lights/LightsManager';
 import LightFactory, { ILightFactory } from '../../../src/Controllers/Lights/LightFactory';
 import { Discovery } from 'magic-home';
+import RateLimitedOperation from '../../../src/Utilities/RateLimitedOperation';
 
 jest.mock('magic-home');
 jest.mock('../../../src/Controllers/Lights/LightFactory');
+jest.mock('../../../src/Utilities/RateLimitedOperation');
 
 let lightsManager: ILightsManager;
-const dummyDiscoverTimeout: number = 500;
+const dummyDiscoveryRateLimit: number = 500;
 const dummyMaxLights: number = 5;
 
 const mockLightFactory: ILightFactory = new LightFactory(10000);
 
 describe('Tests for LightsManager.', () => {
     beforeEach(() => {
-        lightsManager = new LightsManager(dummyDiscoverTimeout, 1000, dummyMaxLights, mockLightFactory);
+        lightsManager = new LightsManager(dummyDiscoveryRateLimit, dummyMaxLights, mockLightFactory);
     });
 
     afterEach(() => {
@@ -66,7 +68,3 @@ describe('Tests for LightsManager.', () => {
         expect(lightsManager.areAllLightsDiscovered()).toBe(true);
     });
 });
-
-function getMockInstances<TValue>(mockedValue: TValue): jest.Mocked<TValue>[] {
-    return ((mockedValue as unknown) as jest.Mock).mock.instances as jest.Mocked<TValue>[];
-}
