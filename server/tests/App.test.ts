@@ -1,5 +1,4 @@
 import App from '../src/App';
-import {IMock, Mock, Times} from 'typemoq'
 import ButtonManager from '../src/Sensors/Button/ButtonManager';
 import LightSensingLightSwitcher from '../src/Services/LightSensingLightSwitcher';
 import getMockInstances from './TestUtilities';

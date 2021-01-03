@@ -17,7 +17,7 @@ export default class App {
         this.logger = LoggerProvider.createLogger(App.name);
 
         this.lightsManager = new LightsManager(10000, 2, new LightFactory(10000));
-        this.lightSensingLightSwitcher = new LightSensingLightSwitcher(this.lightsManager, new SensorReadRateLimitWrapper(500, new TSL2561(2, 16)), 0.3);
+        this.lightSensingLightSwitcher = new LightSensingLightSwitcher(this.lightsManager, new SensorReadRateLimitWrapper(new TSL2561(2, 16), 500), 0.3);
         this.buttonManager = new ButtonManager(this.lightsManager);
 
         this.shouldControlLoopRun = false;

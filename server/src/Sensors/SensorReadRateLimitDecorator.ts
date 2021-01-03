@@ -7,11 +7,11 @@ export default class SensorReadRateLimitWrapper<TReturn> implements ISensor<TRet
     private sensor: ISensor<TReturn>;
     private readingOperation: RateLimitedOperation<Promise<TReturn>>;
 
-    constructor(readRateLimit: number, sensor: ISensor<TReturn>) {
+    constructor(sensor: ISensor<TReturn>, readRateLimit: number) {
 		this.logger = LoggerProvider.createLogger(SensorReadRateLimitWrapper.name);
         this.sensor = sensor;
         this.readingOperation = new RateLimitedOperation(
-            (() =>  this.sensor.getReadingAsync()).bind(this),
+            sensor.getReadingAsync,
             readRateLimit);
     }
 
