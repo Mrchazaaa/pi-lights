@@ -7,4 +7,8 @@ node_js:
 script:
   - cd server
   - npm ci
-  - npm run test
+  - npm run test-coverage
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+ 

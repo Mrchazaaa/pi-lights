@@ -9,6 +9,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "test": "jest",
+    "test-coverage": "jest --coverage",
     "stop": "pkill piServer"
   },
   "keywords": [],
