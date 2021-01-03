@@ -1,5 +1,6 @@
 # Pi Lights
 [![Build Status](https://travis-ci.com/Mrchazaaa/pi-lights.svg?branch=master)](https://travis-ci.com/Mrchazaaa/pi-lights)
+[![codecov](https://codecov.io/gh/Mrchazaaa/pi-lights/branch/master/graph/badge.svg?token=7SV384HJIL)](https://codecov.io/gh/Mrchazaaa/pi-lights)
 
 A linux service running on a Raspberry Pi kept in my room (pictured below). The Pi continuously polls a series of light dependent resistors, averaging the readings of each sensor, effectively tracking light levels of the room throughout the day. When the light level crosses a certain threshold the room's Wi-Fi lights are turned on/off.
 
