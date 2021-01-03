@@ -4,11 +4,14 @@ language: node_js
 node_js:
   - node
 
-script:
+install:
   - cd server
   - npm ci
 
-after_success:
+script:
+  - npm run build
   - npm run test-coverage
+
+after_success:
   - bash <(curl -s https://codecov.io/bash)
  
