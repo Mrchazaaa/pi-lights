@@ -2,12 +2,13 @@ import LightsManager, { ILightsManager } from '../../../src/Controllers/Lights/L
 import LightFactory, { ILightFactory } from '../../../src/Controllers/Lights/LightFactory';
 import { Discovery } from 'magic-home';
 import RateLimitedOperation from '../../../src/Utilities/RateLimitedOperation';
+import { getMockInstances, getLastMockInstance } from '../../TestUtilities';
 
 jest.mock('magic-home');
 jest.mock('../../../src/Controllers/Lights/LightFactory');
 jest.mock('../../../src/Utilities/RateLimitedOperation');
 
-let lightsManager: ILightsManager;
+var lightsManager: ILightsManager;
 const dummyDiscoveryRateLimit: number = 500;
 const dummyMaxLights: number = 5;
 
@@ -15,6 +16,8 @@ const mockLightFactory: ILightFactory = new LightFactory(10000);
 
 describe('Tests for LightsManager.', () => {
     beforeEach(() => {
+        (RateLimitedOperation as jest.Mock<RateLimitedOperation<Promise<void>>>).mockImplementationOnce((op: () => Promise<void>, timeout: number) => ({ execute: op } as RateLimitedOperation<Promise<void>>));
+
         lightsManager = new LightsManager(dummyDiscoveryRateLimit, dummyMaxLights, mockLightFactory);
     });
 
@@ -22,7 +25,12 @@ describe('Tests for LightsManager.', () => {
         jest.resetAllMocks();
     });
 
-    test('Discovering lights discovers lights via magic home discover service.', async () => {
+    test('Creating a new light creates an underlying rate limited operation, for the given sensors read method.', () => {
+        expect(RateLimitedOperation).toBeCalledTimes(1);
+        expect(RateLimitedOperation).toHaveBeenLastCalledWith(expect.any(Function), dummyDiscoveryRateLimit);
+    });
+
+    test('Discovering lights executes underling rate limited operation.', async () => {
         Discovery.scan = jest.fn().mockResolvedValue([]);
 
         await lightsManager.discoverDevicesAsync();

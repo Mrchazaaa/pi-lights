@@ -2,8 +2,8 @@ import RateLimitedOperation from '../../src/Utilities/RateLimitedOperation';
 import { sleep } from '../../src/Utilities/TimingHelper';
 
 let rateLimitedOperation: RateLimitedOperation<Promise<number>>;
-const dummyRateLimit = 100;
-let mockOperation: jest.Mock;
+const dummyRateLimit = 500;
+let mockOperation: jest.Mock<Promise<number>>;
 
 describe('Tests for RateLimitedOperation.', () => {
     beforeEach(() => {
@@ -12,11 +12,11 @@ describe('Tests for RateLimitedOperation.', () => {
     });
 
     test('Executing operation executes underlying operation.', async () => {
-        mockOperation.mockImplementation(_ => dummyOperationResult);
-        const rateLimitedOperation = new RateLimitedOperation<number>(mockOperation.getMockImplementation(), dummyRateLimit);
         const dummyOperationResult: number = 10;
+        mockOperation.mockResolvedValue(dummyOperationResult);
+        const rateLimitedOperation = new RateLimitedOperation<Promise<number>>(mockOperation, dummyRateLimit);
 
-        const result = rateLimitedOperation.execute();
+        const result = await rateLimitedOperation.execute();
 
         expect(mockOperation).toBeCalledTimes(1);
         expect(result).toEqual(dummyOperationResult);

@@ -18,7 +18,7 @@ export default class LightsManager implements ILightsManager {
         this.maxLights = numberOfLights;
         this.lightFactory = lightFactory;
         this.discoveryOperation = new RateLimitedOperation<Promise<void>>(
-            (() => this.doDiscoverDevicesAsync()).bind(this),
+            this.doDiscoverDevicesAsync.bind(this),
             discoveryRateLimit);
     }
 
