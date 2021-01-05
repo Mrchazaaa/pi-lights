@@ -3,6 +3,6 @@ export function getMockInstances<TValue>(mockedValue: TValue | jest.Mock<TValue>
 }
 
 export function getLastMockInstance<TValue>(mockedValue: jest.Mock<TValue>): jest.Mocked<TValue> {
-    var instances = getMockInstances(mockedValue);
+    const instances = getMockInstances(mockedValue);
     return instances[instances.length - 1];
 }

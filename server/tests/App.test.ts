@@ -1,7 +1,7 @@
 import App from '../src/App';
 import ButtonManager from '../src/Sensors/Button/ButtonManager';
 import LightSensingLightSwitcher from '../src/Services/LightSensingLightSwitcher';
-import getMockInstances from './TestUtilities';
+import { getMockInstances } from './TestUtilities';
 
 jest.mock('../src/Sensors/Button/ButtonManager');
 jest.mock('../src/Services/LightSensingLightSwitcher');

@@ -1,4 +1,4 @@
-import getMockInstances from '../TestUtilities';
+import { getMockInstances } from '../TestUtilities';
 import SensorReadRateLimitDecorator, { ISensor } from '../../src/Sensors/SensorReadRateLimitDecorator';
 import RateLimitedOperation from '../../src/Utilities/RateLimitedOperation';
 import {IMock, Mock, Times} from 'typemoq'

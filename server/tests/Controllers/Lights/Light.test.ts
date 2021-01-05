@@ -2,7 +2,7 @@ import Light from '../../../src/Controllers/Lights/Light';
 import LightState from '../../../src/Controllers/Lights/LightState';
 import ILight from '../../../src/Controllers/Lights/ILight';
 import { Control } from 'magic-home';
-import getMockInstances from '../../TestUtilities';
+import { getMockInstances } from '../../TestUtilities';
 
 jest.mock('magic-home');
 

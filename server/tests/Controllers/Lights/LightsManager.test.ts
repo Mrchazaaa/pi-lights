@@ -8,7 +8,7 @@ jest.mock('magic-home');
 jest.mock('../../../src/Controllers/Lights/LightFactory');
 jest.mock('../../../src/Utilities/RateLimitedOperation');
 
-var lightsManager: ILightsManager;
+let lightsManager: ILightsManager;
 const dummyDiscoveryRateLimit: number = 500;
 const dummyMaxLights: number = 5;
 
