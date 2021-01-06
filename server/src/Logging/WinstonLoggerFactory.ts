@@ -1,6 +1,6 @@
 import 'winston-daily-rotate-file';
 import Winston, { format, Logger } from 'winston';
-const { combine, timestamp, json, prettyPrint } = format;
+const { combine, timestamp } = format;
 
 export default class WinstonLoggerFactory {
     public static createLogger(logsBaseFilePath: string, isDisabled: boolean): Logger  {
@@ -20,7 +20,7 @@ export default class WinstonLoggerFactory {
         return Winston.createLogger({
             transports: [ this.createDummyTransport() ],
             format: combine(
-                timestamp({ format: 'HH:mm:ss.SSS' }),
+                timestamp({ format: 'HH:mm:ss.SS' }),
                 format.printf(info => {
                     const infoLevel = info.level + ':' + ' '.repeat('error'.length - info.level.length);
                     return `${info.timestamp} ${infoLevel} ${info.message}`

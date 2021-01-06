@@ -5,8 +5,8 @@ import {IMock, Mock, Times} from 'typemoq'
 
 jest.mock('../../src/Utilities/RateLimitedOperation');
 
-let sensorReadRateLimitDecorator: ISensor<number>;
-let mockSensor: IMock<ISensor<number>>;
+var sensorReadRateLimitDecorator: ISensor<number>;
+var mockSensor: IMock<ISensor<number>>;
 const dummyRateLimit = 500;
 
 describe('Tests for SensorReadRateLimitDecorator.', () => {

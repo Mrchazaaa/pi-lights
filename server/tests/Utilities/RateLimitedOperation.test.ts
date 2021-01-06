@@ -1,9 +1,9 @@
 import RateLimitedOperation from '../../src/Utilities/RateLimitedOperation';
 import { sleep } from '../../src/Utilities/TimingHelper';
 
-let rateLimitedOperation: RateLimitedOperation<Promise<number>>;
+var rateLimitedOperation: RateLimitedOperation<Promise<number>>;
 const dummyRateLimit = 500;
-let mockOperation: jest.Mock<Promise<number>>;
+var mockOperation: jest.Mock<Promise<number>>;
 
 describe('Tests for RateLimitedOperation.', () => {
     beforeEach(() => {
