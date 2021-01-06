@@ -2,7 +2,6 @@ import LightsManager, { ILightsManager } from '../../../src/Controllers/Lights/L
 import LightFactory, { ILightFactory } from '../../../src/Controllers/Lights/LightFactory';
 import { Discovery } from 'magic-home';
 import RateLimitedOperation from '../../../src/Utilities/RateLimitedOperation';
-import { getMockInstances, getLastMockInstance } from '../../TestUtilities';
 
 jest.mock('magic-home');
 jest.mock('../../../src/Controllers/Lights/LightFactory');

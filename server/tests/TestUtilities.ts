@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 export function getMockInstances<TValue>(mockedValue: TValue | jest.Mock<TValue>): jest.Mocked<TValue>[] {
     return ((mockedValue as unknown) as jest.Mock).mock.instances as jest.Mocked<TValue>[];
 }

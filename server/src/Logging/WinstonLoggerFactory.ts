@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import 'winston-daily-rotate-file';
 import Winston, { format, Logger } from 'winston';
 const { combine, timestamp } = format;
