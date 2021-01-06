@@ -48,7 +48,7 @@ describe('Tests for LightSensingLightSwitcher.', () => {
         mockLightWithUnknownState.verify(l => l.updateStateCacheAsync(), Times.once());
     });
 
-    test.only('When all lights haven\'t been discovered, lights are discovered.', async () => {
+    test('When all lights haven\'t been discovered, lights are discovered.', async () => {
         mockLightsManager.setup(lm => lm.areAllLightsDiscovered()).returns(() => false);
 
         mockLightsManager.setup(lm => lm.getLights()).returns(() => [Mock.ofType<ILight>().object]);
@@ -130,6 +130,6 @@ describe('Tests for LightSensingLightSwitcher.', () => {
 
 function setRoomAsDark(dark: boolean) {
     mockMeanSensorFilter.setup(x => x.getReadingAsync()).returns(() => {
-        return new Promise(res => res( { ambient: dark ? dummyThreshhold+1 : dummyThreshhold - 1 } ))
+        return new Promise(res => res( { ambient: dark ? dummyThreshhold - 1 : dummyThreshhold + 1 } ))
     });
 }
