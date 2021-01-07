@@ -1,6 +1,9 @@
 import fs from 'fs';
-import jsonfile from 'jsonfile';
+const fsPromises = fs.promises
+// import jsonfile from 'jsonfile';
 import IDataLogger from './IDataLogger';
+import path from 'path'; 
+
 
 export default class DataLogger implements IDataLogger {
 
@@ -10,18 +13,24 @@ export default class DataLogger implements IDataLogger {
         this.baseFilePath = baseFilePath;
     }
 
-    public log(datum: number): void {
+    public async log(datum: number): Promise<void> {
         const filepath = `${this.baseFilePath}/${new Date().toISOString().replace(/T.*/, '')}.json`;
 
         let data: any = {};
 
         if (fs.existsSync(filepath)) {
-            data = jsonfile.readFileSync(filepath);
+        // if (await fsPromises.stat(filepath)) {
+            var rawData = fs.readFileSync(filepath, 'utf8');
+            // var rawData = await fsPromises.readFile(filepath, 'utf8');
+            data = JSON.parse(rawData);
         }
 
         data[Date.now()] = datum;
 
-        jsonfile.writeFileSync(filepath, data);
+        var stringifiedData = JSON.stringify(data);
+
+        fs.writeFileSync(filepath, stringifiedData, 'utf8');
+        // await fsPromises.writeFile(filepath, stringifiedData, 'utf8');
     }
 }
 
