@@ -19,7 +19,7 @@ describe('Tests for DataLogger.', () => {
 
     test('Logging datum to non-existent file, creates file and logs to it.', () => {
         (fs.existsSync as jest.Mock) = jest.fn().mockReturnValue(false);
-        // (fs.writeFileSync as jest.Mock) = jest.fn();
+        (fs.writeFileSync as jest.Mock) = jest.fn();
 
         dataLogger.log(dummyDatum);
 
