@@ -2,9 +2,9 @@ import winston from 'winston';
 import ContextAwareLogger from '../../src/Logging/ContextAwareLogger';
 import { IMock, Mock, Times, It } from 'typemoq'
 
-var contextAwareLogger: ContextAwareLogger;
-var mockedInternalLogger: IMock<winston.Logger>;
-const dummyContext: string = "dummy context";
+let contextAwareLogger: ContextAwareLogger;
+let mockedInternalLogger: IMock<winston.Logger>;
+const dummyContext: string = 'dummy context';
 
 describe('Tests for ContextAwareLogger.', () => {
     beforeEach(() => {
@@ -13,7 +13,7 @@ describe('Tests for ContextAwareLogger.', () => {
     });
 
     test('Logging at error level prepends log message with context.', async () => {
-        const message = "my message";
+        const message = 'my message';
 
         contextAwareLogger.error(message);
 
@@ -21,7 +21,7 @@ describe('Tests for ContextAwareLogger.', () => {
     });
 
     test('Logging at info level prepends log message with context.', async () => {
-        const message = "my message";
+        const message = 'my message';
 
         contextAwareLogger.info(message);
 

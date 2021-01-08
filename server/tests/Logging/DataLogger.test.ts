@@ -1,45 +1,53 @@
 import DataLogger from '../../src/Logging/DataLogger';
-// import jsonfile from 'jsonfile';
-import fs from 'fs';
+import FileUtilities from '../../src/FileUtilities/FileUtilities';
+import MockDate from 'mockdate'
 
-var dataLogger: DataLogger;
-const baseFilePath: string = "dummy/filePath";
+jest.doMock('../../src/FileUtilities/FileUtilities')
+
+let dataLogger: DataLogger;
+const dummyFilePath: string = 'dummy/filePath';
 const dummyDatum: number = 420;
-
-jest.doMock('fs');
+const dummyDate: number = 1000000000000;
 
 describe('Tests for DataLogger.', () => {
     beforeEach(() => {
-        dataLogger = new DataLogger(baseFilePath);
+        dataLogger = new DataLogger(dummyFilePath);
+        MockDate.set(dummyDate);
     });
 
     afterEach(() => {
         jest.resetAllMocks();
     });
 
-    test('Logging datum to non-existent file, creates file and logs to it.', () => {
-        (fs.existsSync as jest.Mock) = jest.fn().mockReturnValue(false);
-        (fs.writeFileSync as jest.Mock) = jest.fn();
+    test('Logging datum to non-existent file, creates file and logs to it.', async () => {
+        (FileUtilities.writeJsonToFile as jest.Mock) = jest.fn();
+        (FileUtilities.fileExistsForWriting as jest.Mock) = jest.fn().mockResolvedValueOnce(false);
 
-        dataLogger.log(dummyDatum);
+        await dataLogger.log(dummyDatum);
 
-        expect(fs.existsSync).toBeCalledTimes(1);
-        expect(fs.writeFileSync).toBeCalledTimes(1);
+        const expectedObject = {};
+        expectedObject[dummyDate] = dummyDatum;
+
+        expect(FileUtilities.writeJsonToFile).toBeCalledTimes(1);
+        expect(FileUtilities.writeJsonToFile).toBeCalledWith(expect.stringContaining(dummyFilePath), expectedObject);
+        expect(FileUtilities.fileExistsForWriting).toBeCalledTimes(1);
     });
 
-    // test('Logging datum to existent file, logs to it.', async () => {
-    //     const message = "my message";
+    test('Logging datum to existent file, reads the file and appends to its existing data.', async () => {
+        const dummyExistingData = {'1000000000000': 560};
 
-    //     dataLogger.error(message);
+        (FileUtilities.writeJsonToFile as jest.Mock) = jest.fn();
+        (FileUtilities.readJsonFile as jest.Mock) = jest.fn().mockResolvedValue({});
+        (FileUtilities.fileExistsForWriting as jest.Mock) = jest.fn().mockResolvedValueOnce(true);
 
-    //     mockedInternalLogger.verify(m => m.error(It.is(m => m.includes(dummyContext) && m.includes(message)), It.isAny()), Times.once());
-    // });
+        await dataLogger.log(dummyDatum);
 
-    // test('Logging datum appends datum to existing file indexed under the current date.', async () => {
-    //     const message = "my message";
+        const expectedObject = dummyExistingData;
+        expectedObject[dummyDate] = dummyDatum;
 
-    //     dataLogger.info(message);
-
-    //     mockedInternalLogger.verify(m => m.info(It.is(m => m.includes(dummyContext) && m.includes(message)), It.isAny()), Times.once());
-    // });
+        expect(FileUtilities.writeJsonToFile).toBeCalledTimes(1);
+        expect(FileUtilities.writeJsonToFile).toBeCalledWith(expect.stringContaining(dummyFilePath), expectedObject);
+        expect(FileUtilities.readJsonFile).toBeCalledTimes(1);
+        expect(FileUtilities.fileExistsForWriting).toBeCalledTimes(1);
+    });
 });

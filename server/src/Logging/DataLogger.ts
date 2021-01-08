@@ -1,9 +1,5 @@
-import fs from 'fs';
-const fsPromises = fs.promises
-// import jsonfile from 'jsonfile';
+import FileUtilities from '../FileUtilities/FileUtilities';
 import IDataLogger from './IDataLogger';
-import path from 'path'; 
-
 
 export default class DataLogger implements IDataLogger {
 
@@ -16,21 +12,16 @@ export default class DataLogger implements IDataLogger {
     public async log(datum: number): Promise<void> {
         const filepath = `${this.baseFilePath}/${new Date().toISOString().replace(/T.*/, '')}.json`;
 
-        var data: any = {};
+        let data: any = {};
 
-        if (fs.existsSync(filepath)) {
-        // if (await fsPromises.stat(filepath)) {
-            const rawData = fs.readFileSync(filepath, 'utf8');
-            // var rawData = await fsPromises.readFile(filepath, 'utf8');
-            data = JSON.parse(rawData);
+        if (await FileUtilities.fileExistsForWriting(filepath)) {
+            data = await FileUtilities.readJsonFile(filepath);
         }
 
         data[Date.now()] = datum;
 
-        const stringifiedData = JSON.stringify(data);
-
-        fs.writeFileSync(filepath, stringifiedData, 'utf8');
-        // await fsPromises.writeFile(filepath, stringifiedData, 'utf8');
+        // await FileUtilities.writeJsonToFile(filepath, data);
+        await FileUtilities.writeJsonToFile(filepath, data);
     }
 }
 
