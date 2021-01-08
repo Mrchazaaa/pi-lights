@@ -16,18 +16,18 @@ export default class DataLogger implements IDataLogger {
     public async log(datum: number): Promise<void> {
         const filepath = `${this.baseFilePath}/${new Date().toISOString().replace(/T.*/, '')}.json`;
 
-        let data: any = {};
+        var data: any = {};
 
         if (fs.existsSync(filepath)) {
         // if (await fsPromises.stat(filepath)) {
-            var rawData = fs.readFileSync(filepath, 'utf8');
+            const rawData = fs.readFileSync(filepath, 'utf8');
             // var rawData = await fsPromises.readFile(filepath, 'utf8');
             data = JSON.parse(rawData);
         }
 
         data[Date.now()] = datum;
 
-        var stringifiedData = JSON.stringify(data);
+        const stringifiedData = JSON.stringify(data);
 
         fs.writeFileSync(filepath, stringifiedData, 'utf8');
         // await fsPromises.writeFile(filepath, stringifiedData, 'utf8');
