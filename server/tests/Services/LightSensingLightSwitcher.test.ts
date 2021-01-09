@@ -6,13 +6,9 @@ import ISensor from '../../src/Sensors/ISensor';
 import LightState from '../../src/Controllers/Lights/LightState';
 import {IMock, Mock, Times} from 'typemoq'
 
-interface TLightData {
-    ambient: number
-}
-
 let lightSensingLightSwitch: ILightSensingLightSwitcher;
 
-let mockLightSensor: IMock<ISensor<TLightData>>;
+let mockLightSensor: IMock<ISensor<number>>;
 let mockLightsManager: IMock<ILightsManager>;
 let mockLightWithUnknownState: IMock<ILight>;
 let mockLightWithOnState: IMock<ILight>;
@@ -22,7 +18,7 @@ const dummyLightThreshhold = 195;
 
 describe('Tests for LightSensingLightSwitcher.', () => {
     beforeEach(() => {
-        mockLightSensor = Mock.ofType<ISensor<TLightData>>();
+        mockLightSensor = Mock.ofType<ISensor<number>>();
         mockLightsManager = Mock.ofType<ILightsManager>();
         mockLightWithUnknownState = Mock.ofType<ILight>();
         mockLightWithUnknownState.setup(l => l.getCachedOnState()).returns(() => LightState.Unknown);
@@ -124,6 +120,6 @@ describe('Tests for LightSensingLightSwitcher.', () => {
 
 function setRoomAsDark(dark: boolean) {
     mockLightSensor.setup(x => x.getReadingAsync()).returns(() => {
-        return new Promise(res => res( { ambient: dark ? dummyLightThreshhold - 1 : dummyLightThreshhold + 1 } ))
+        return new Promise(res => res( dark ? dummyLightThreshhold - 1 : dummyLightThreshhold + 1 ))
     });
 }

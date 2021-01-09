@@ -4,7 +4,15 @@ import LightsManager, { ILightsManager } from './Controllers/Lights/LightsManage
 import SensorReadRateLimitWrapper from './Sensors/SensorReadRateLimitDecorator';
 import LightFactory from './Controllers/Lights/LightFactory';
 import TSL2561 from './Sensors/LightSensor/TSL2561';
+import LightSensor from './Sensors/LightSensor/LightSensor';
 import ButtonManager, { IButtonManager } from './Sensors/Button/ButtonManager';
+import MeanSensorDecorator from './Sensors/MeanSensorDecorator';
+
+const discoveryRateLimit = 10000;
+const numberOfLights = 2;
+const lightPromiseTimeout = 10000;
+const lightSensorReadRateLimit = 500;
+const isDarkThreshold = 0.3;
 
 export default class App {
     private logger: ILogger;
@@ -16,9 +24,22 @@ export default class App {
     constructor() {
         this.logger = LoggerProvider.createLogger(App.name);
 
-        this.lightsManager = new LightsManager(10000, 2, new LightFactory(10000));
-        this.lightSensingLightSwitcher = new LightSensingLightSwitcher(this.lightsManager, new SensorReadRateLimitWrapper(new TSL2561(2, 16), 500), 0.3);
-        this.buttonManager = new ButtonManager(this.lightsManager);
+        this.lightsManager = new LightsManager(
+            discoveryRateLimit,
+            numberOfLights,
+            new LightFactory(lightPromiseTimeout));
+
+            this.lightSensingLightSwitcher = new LightSensingLightSwitcher(
+                this.lightsManager,
+                new SensorReadRateLimitWrapper(
+                    new MeanSensorDecorator(
+                        5,
+                        new LightSensor(new TSL2561(2, 16))
+                    ),
+                    lightSensorReadRateLimit),
+                isDarkThreshold);
+
+            this.buttonManager = new ButtonManager(this.lightsManager);
 
         this.shouldControlLoopRun = false;
     }

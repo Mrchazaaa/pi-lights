@@ -5,18 +5,14 @@ import ILightSensingLightSwitcher from './ILightSensingLightSwitcher';
 import ILight from '../Controllers/Lights/ILight';
 import ISensor from '../Sensors/ISensor';
 
-interface TLightData {
-    ambient: number
-}
-
 export default class LightSensingLightSwitcher implements ILightSensingLightSwitcher {
 	private logger: ILogger;
 	private dataLogger: IDataLogger;
 	private lightsManager: ILightsManager;
-	private lightSensor: ISensor<TLightData>;
+	private lightSensor: ISensor<number>;
     private lightThreshold: number;
 
-	constructor(lightsManager: ILightsManager, lightSensor: ISensor<TLightData>, lightThreshold: number) {
+	constructor(lightsManager: ILightsManager, lightSensor: ISensor<number>, lightThreshold: number) {
 		this.logger = LoggerProvider.createLogger(LightSensingLightSwitcher.name);
 		this.dataLogger = LoggerProvider.createDataLogger();
 		this.lightsManager = lightsManager;
@@ -64,7 +60,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 
     private async isDarkAsync(): Promise<boolean> {
         this.logger.info(`Reading new light level.`);
-        const reading = (await this.lightSensor.getReadingAsync()).ambient;
+        const reading = (await this.lightSensor.getReadingAsync());
         this.logger.info(`Read new light level '${reading}'.`);
         this.dataLogger.log(reading);
         return (this.lightThreshold - reading) >= 0;
