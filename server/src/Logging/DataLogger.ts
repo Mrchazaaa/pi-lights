@@ -20,7 +20,6 @@ export default class DataLogger implements IDataLogger {
 
         data[Date.now()] = datum;
 
-        // await FileUtilities.writeJsonToFile(filepath, data);
         await FileUtilities.writeJsonToFile(filepath, data);
     }
 }

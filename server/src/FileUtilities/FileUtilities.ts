@@ -21,14 +21,13 @@ export default class FileUtilities {
     }
 
     public static async readJsonFile(filepath: string): Promise<object> {
-        const rawData = await fsPromises.readFile(filepath, 'utf8');
+        const rawData = await fsPromises.readFile(filepath, 'utf-8');
         return JSON.parse(rawData);
     }
 
-    // public static async writeJsonToFile(filepath: string, data: any): Promise<void> {
     public static async writeJsonToFile(filepath: string, data: any): Promise<void> {
         const stringifiedData = JSON.stringify(data);
-        return await fsPromises.writeFile(filepath, stringifiedData, 'utf8');
+        return await fsPromises.writeFile(filepath, stringifiedData, 'utf-8');
     }
 
     public static async fileExistsForWriting(filepath: string): Promise<boolean> {
