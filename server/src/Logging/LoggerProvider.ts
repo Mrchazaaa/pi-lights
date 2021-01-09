@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { dataBaseFilePath, logsBaseFilePath } from '../../../config.json';
 import { Logger } from 'winston';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
