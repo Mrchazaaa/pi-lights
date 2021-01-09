@@ -17,9 +17,9 @@ export default class Button implements IButton {
 
                 if (error) {
                     this.logger.error(error);
+                } else {
+                    await pressedCallback();
                 }
-
-                await pressedCallback();
             }).bind(this));
 
         this.logger.info(`Initialiazing button with pin ${pin}.`);
@@ -32,3 +32,5 @@ export default class Button implements IButton {
         this.button.unexport();
     }
 }
+
+export { IButton };

@@ -2,8 +2,8 @@ import LightSensor, { ISensor } from '../../../src/Sensors/LightSensor/LightSens
 import TSL2561 from '../../../src/Sensors/LightSensor/TSL2561';
 import { IMock, Mock, Times, It } from 'typemoq'
 
-let lightSensor: LightSensor;
-let mockedInternalSensor: IMock<TSL2561>;
+var lightSensor: LightSensor;
+var mockedInternalSensor: IMock<TSL2561>;
 
 describe('Tests for LightSensor.', () => {
     beforeEach(() => {
