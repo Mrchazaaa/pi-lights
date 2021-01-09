@@ -11,7 +11,7 @@ export default interface ILight {
 
     updateStateCacheAsync(): Promise<boolean>;
 
-    setStrobe(): Promise<boolean>;
+    setStrobeAsync(): Promise<boolean>;
 
-    setAmbient(): Promise<boolean>;
+    setAmbientAsync(): Promise<boolean>;
 }

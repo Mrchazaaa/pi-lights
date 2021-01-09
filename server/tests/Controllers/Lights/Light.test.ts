@@ -19,6 +19,44 @@ describe('Tests for Light.', () => {
         jest.resetAllMocks();
     });
 
+    test('Turning on light turns on light.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.turnOn.mockResolvedValue(true);
+
+        await light.turnOnAsync();
+
+        expect(mockedControlInstance.turnOn).toBeCalledTimes(1);
+    });
+
+    test('Turning off light turns off light.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.turnOff.mockResolvedValue(true);
+
+        await light.turnOffAsync();
+
+        expect(mockedControlInstance.turnOff).toBeCalledTimes(1);
+    });
+
+    test('Switching light to strobe, switches light to strobe.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.setPattern.mockResolvedValue(true);
+
+        await light.setStrobeAsync();
+
+        expect(mockedControlInstance.setPattern).toBeCalledTimes(1);
+        expect(mockedControlInstance.setPattern).toBeCalledWith('seven_color_strobe_flash', 100);
+    });
+
+    test('Switching light to ambient, switches light to ambient.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.setColor.mockResolvedValue(true);
+
+        await light.setAmbientAsync();
+
+        expect(mockedControlInstance.setColor).toBeCalledTimes(1);
+        expect(mockedControlInstance.setColor).toBeCalledWith(51, 0, 0);
+    });
+
     test('Creating a new light creates an underlying magic-home control with the given address.', () => {
         expect(Control).toBeCalledTimes(1);
         expect(Control).toBeCalledWith(dummyAddress, expect.anything());

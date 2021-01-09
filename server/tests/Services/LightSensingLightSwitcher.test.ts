@@ -10,13 +10,13 @@ interface TLightData {
     ambient: number
 }
 
-var lightSensingLightSwitch: ILightSensingLightSwitcher;
+let lightSensingLightSwitch: ILightSensingLightSwitcher;
 
-var mockLightSensor: IMock<ISensor<TLightData>>;
-var mockLightsManager: IMock<ILightsManager>;
-var mockLightWithUnknownState: IMock<ILight>;
-var mockLightWithOnState: IMock<ILight>;
-var mockLightWithOffState: IMock<ILight>;
+let mockLightSensor: IMock<ISensor<TLightData>>;
+let mockLightsManager: IMock<ILightsManager>;
+let mockLightWithUnknownState: IMock<ILight>;
+let mockLightWithOnState: IMock<ILight>;
+let mockLightWithOffState: IMock<ILight>;
 
 const dummyLightThreshhold = 195;
 

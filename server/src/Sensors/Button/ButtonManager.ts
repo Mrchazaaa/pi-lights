@@ -56,7 +56,7 @@ export default class ButtonManager implements IButtonManager {
         logger.info('Setting ambient lighting.');
 
         lights.forEach(async (light: ILight) => {
-            await light.setAmbient()
+            await light.setAmbientAsync()
         });
     }
 
@@ -68,7 +68,7 @@ export default class ButtonManager implements IButtonManager {
         logger.info('Setting strobe lighting.');
 
         lights.forEach(async (light: ILight) => {
-            await light.setStrobe()
+            await light.setStrobeAsync()
         });
     }
 
