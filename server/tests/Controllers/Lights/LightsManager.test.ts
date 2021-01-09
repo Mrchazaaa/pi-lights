@@ -37,17 +37,37 @@ describe('Tests for LightsManager.', () => {
         expect(Discovery.scan).toBeCalledTimes(1);
     });
 
-    test('Gettings lights gets discovered lights.', async () => {
-        const dummyAddresses = ['num1', 'num2'];
-        Discovery.scan = jest.fn().mockResolvedValue(dummyAddresses.map(x => { return { address: x } }));
+    test('Discovering lights, when max lights have already been discovered, does not execute underling rate limited operation.', async () => {
+        const dummyAddresses = ['lightAddress1', 'lightAddress2', 'lightAddress3', 'lightAddress4', 'lightAddress5'];
+        await setupLightsManagerToDiscoverLights(dummyAddresses);
 
-        mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
+        expect(Discovery.scan).toBeCalledTimes(1);
 
         await lightsManager.discoverDevicesAsync();
+
+        expect(Discovery.scan).toBeCalledTimes(1);
+    });
+
+    test('Removing light removes light from cache.', async () => {
+        const addressToRemove = 'lightAddress3';
+
+        const dummyAddresses = ['lightAddress1', 'lightAddress2', addressToRemove, 'lightAddress4', 'lightAddress5'];
+        await setupLightsManagerToDiscoverLights(dummyAddresses);
+
+        expect(lightsManager.getLights().map(x => x.address)).toEqual(dummyAddresses);
+
+        lightsManager.removeLight(addressToRemove);
+
+        expect(lightsManager.getLights().map(x => x.address)).toEqual(dummyAddresses.filter(x => x !== addressToRemove));
+    });
+
+    test('Gettings lights gets discovered lights.', async () => {
+        const dummyAddresses = ['lightAddress1', 'lightAddress2'];
+        await setupLightsManagerToDiscoverLights(dummyAddresses);
+
         const result = lightsManager.getLights();
 
         expect(mockLightFactory.createLight).toBeCalled();
-
         expect(result.length).toBe(2);
         expect(result[0].address).toBe(dummyAddresses[0]);
         expect(result[1].address).toBe(dummyAddresses[1]);
@@ -75,3 +95,10 @@ describe('Tests for LightsManager.', () => {
         expect(lightsManager.areAllLightsDiscovered()).toBe(true);
     });
 });
+
+async function setupLightsManagerToDiscoverLights(lightAddresses: string[]) {
+    Discovery.scan = jest.fn().mockResolvedValue(lightAddresses.map(x => { return { address: x } }));
+    mockLightFactory.createLight = jest.fn().mockImplementation(address => { { return { address } } });
+
+    await lightsManager.discoverDevicesAsync();
+}
