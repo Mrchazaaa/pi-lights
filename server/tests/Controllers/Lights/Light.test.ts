@@ -135,4 +135,26 @@ describe('Tests for Light.', () => {
 
         await expect(light.turnOnAsync()).rejects.toThrow()
     });
+
+    test('Toggling light, turns light on if light is off.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.queryState.mockResolvedValue({ on: false });
+
+        await light.toggleAsync();
+
+        expect(mockedControlInstance.queryState).toBeCalledTimes(1);
+        expect(mockedControlInstance.turnOff).toBeCalledTimes(0);
+        expect(mockedControlInstance.turnOn).toBeCalledTimes(1);
+    });
+
+    test('Toggling light, turns light off if light is on.', async () => {
+        const mockedControlInstance = getMockInstances(Control)[0];
+        mockedControlInstance.queryState.mockResolvedValue({ on: true });
+
+        await light.toggleAsync();
+
+        expect(mockedControlInstance.queryState).toBeCalledTimes(1);
+        expect(mockedControlInstance.turnOn).toBeCalledTimes(0);
+        expect(mockedControlInstance.turnOff).toBeCalledTimes(1);
+    });
 });
