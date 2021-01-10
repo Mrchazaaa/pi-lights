@@ -5,6 +5,8 @@ export default interface ILight {
 
     getCachedOnState(): LightState;
 
+    toggleAsync(): Promise<void>;
+
     turnOnAsync(): Promise<boolean>;
 
     turnOffAsync(): Promise<boolean>;

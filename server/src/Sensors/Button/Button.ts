@@ -6,7 +6,7 @@ export default class Button implements IButton {
     private logger: ILogger;
     private button: Gpio;
 
-    constructor(pin: number, pressedCallback: () => Promise<void>, debounceTimeout: number) {
+    constructor(pin: number, debounceTimeout: number, pressedCallback: () => Promise<any>) {
         this.logger = LoggerProvider.createLogger(Button.name);
 
         const buttons = new Gpio(pin, 'in', 'falling', {debounceTimeout});

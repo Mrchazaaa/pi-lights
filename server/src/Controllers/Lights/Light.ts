@@ -39,6 +39,19 @@ export default class Light implements ILight {
         return result;
     }
 
+    public async toggleAsync(): Promise<void> {
+        this.logger.info(`Toggling light ${this.lightControl._address}.`);
+
+        const state = await this.updateStateCacheAsync();
+
+        if (state) {
+            await this.turnOffAsync();
+        }
+        else {
+            await this.turnOnAsync();
+        }
+    }
+
     public async turnOffAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => device.turnOff(), `Turning off ${this.lightControl._address}.`);
 
