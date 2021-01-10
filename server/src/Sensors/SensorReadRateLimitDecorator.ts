@@ -11,7 +11,7 @@ export default class SensorReadRateLimitWrapper<TReturn> implements ISensor<TRet
 		this.logger = LoggerProvider.createLogger(SensorReadRateLimitWrapper.name);
         this.sensor = sensor;
         this.readingOperation = new RateLimitedOperation(
-            sensor.getReadingAsync,
+            sensor.getReadingAsync.bind(sensor),
             readRateLimit);
     }
 

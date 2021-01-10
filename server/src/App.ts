@@ -29,13 +29,15 @@ export default class App {
             numberOfLights,
             new LightFactory(lightPromiseTimeout));
 
+            const meanSensorDecorator = new MeanSensorDecorator(
+                5,
+                new LightSensor(new TSL2561(2, 16))
+            );
+
             this.lightSensingLightSwitcher = new LightSensingLightSwitcher(
                 this.lightsManager,
                 new SensorReadRateLimitWrapper(
-                    new MeanSensorDecorator(
-                        5,
-                        new LightSensor(new TSL2561(2, 16))
-                    ),
+                    meanSensorDecorator,
                     lightSensorReadRateLimit),
                 isDarkThreshold);
 
