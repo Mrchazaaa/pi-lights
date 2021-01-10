@@ -54,4 +54,4 @@ export default class LightsManager implements ILightsManager {
     }
 }
 
-export { ILightsManager };
+export { ILightsManager, ILight };

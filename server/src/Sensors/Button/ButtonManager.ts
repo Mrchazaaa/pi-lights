@@ -33,13 +33,13 @@ export default class ButtonManager implements IButtonManager {
         });
     }
 
-    private async setAmbient(): Promise<void> {
-        const lights = this.lightsManager.getLights();
+    // private async setAmbient(): Promise<void> {
+    //     const lights = this.lightsManager.getLights();
 
-        lights.forEach(async (light: ILight) => {
-            await light.setAmbientAsync()
-        });
-    }
+    //     lights.forEach(async (light: ILight) => {
+    //         await light.setAmbientAsync()
+    //     });
+    // }
 
     private async setStrobe(): Promise<void> {
         const lights = this.lightsManager.getLights();
