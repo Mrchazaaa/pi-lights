@@ -59,7 +59,7 @@ describe('Tests for Button.', () => {
     test('Callback passed to initialized buttons, toggles lights.', async () => {
         buttonManager.initialize();
 
-        var toggleLightsCallback = (Button as jest.Mock).mock.calls[0][2];
+        const toggleLightsCallback = (Button as jest.Mock).mock.calls[0][2];
         toggleLightsCallback();
 
         mockLight1.verify(l => l.toggleAsync(), Times.once());
@@ -69,7 +69,7 @@ describe('Tests for Button.', () => {
     test('Callback passed to initialized buttons, sets strobe light.', async () => {
         buttonManager.initialize();
 
-        var toggleLightsCallback = (Button as jest.Mock).mock.calls[1][2];
+        const toggleLightsCallback = (Button as jest.Mock).mock.calls[1][2];
         toggleLightsCallback();
 
         mockLight1.verify(l => l.setStrobeAsync(), Times.once());
