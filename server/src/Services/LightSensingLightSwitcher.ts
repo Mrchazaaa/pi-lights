@@ -41,7 +41,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				this.logger.info('It is dark.');
 
 				if (light.getCachedOnState() === LightState.Off) {
-					await light.turnOnAsync();
+                    await light.setAmbientAsync();
 				}
 			} else {
 				this.logger.info('It is not dark.');

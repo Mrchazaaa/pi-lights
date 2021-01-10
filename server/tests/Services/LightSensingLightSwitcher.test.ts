@@ -62,7 +62,7 @@ describe('Tests for LightSensingLightSwitcher.', () => {
         await lightSensingLightSwitch.runControlLoop();
 
         mockLightSensor.verify(l => l.getReadingAsync(), Times.once());
-        mockLightWithOffState.verify(l => l.turnOnAsync(), Times.once());
+        mockLightWithOffState.verify(l => l.setAmbientAsync(), Times.once());
     });
 
     test('If it is dark, and cached light state is already on, lights are not turned on.', async () => {
@@ -74,7 +74,7 @@ describe('Tests for LightSensingLightSwitcher.', () => {
         await lightSensingLightSwitch.runControlLoop();
 
         mockLightSensor.verify(l => l.getReadingAsync(), Times.once());
-        mockLightWithOnState.verify(l => l.turnOnAsync(), Times.never());
+        mockLightWithOnState.verify(l => l.setAmbientAsync(), Times.never());
     });
 
     test('If it is light, and cached light state is on, lights are turned off.', async () => {
@@ -108,7 +108,7 @@ describe('Tests for LightSensingLightSwitcher.', () => {
 
         mockLightSensor.verify(m => m.getReadingAsync(), Times.never());
         mockLightWithUnknownState.verify(l => l.turnOffAsync(), Times.never());
-        mockLightWithUnknownState.verify(l => l.turnOnAsync(), Times.never());
+        mockLightWithUnknownState.verify(l => l.setAmbientAsync(), Times.never());
     });
 
     test('Disposing switcher disposes inner sensor.', async () => {
