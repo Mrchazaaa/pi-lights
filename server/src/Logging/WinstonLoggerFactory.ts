@@ -9,7 +9,7 @@ export default class WinstonLoggerFactory {
         return Winston.createLogger({
             transports: [ this.createLogsDailyRotateTransport(logsBaseFilePath) ],
             format: combine(
-                timestamp({ format: 'HH:mm:ss' }),
+                timestamp({ format: 'HH:mm:ss.SSS' }),
                 format.printf(info => {
                     const infoLevel = info.level + ':' + ' '.repeat('error'.length - info.level.length);
                     return `${info.timestamp} ${infoLevel} ${info.message}`
@@ -22,7 +22,6 @@ export default class WinstonLoggerFactory {
         return Winston.createLogger({
             transports: [ this.createDummyTransport() ],
             format: combine(
-                timestamp({ format: 'HH:mm:ss.SS' }),
                 format.printf(info => {
                     const infoLevel = info.level + ':' + ' '.repeat('error'.length - info.level.length);
                     return `${info.timestamp} ${infoLevel} ${info.message}`

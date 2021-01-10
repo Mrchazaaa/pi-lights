@@ -13,17 +13,22 @@ export default class DataLogger implements IDataLogger {
     }
 
     public async log(datum: number): Promise<void> {
+        this.logger.info(`Logging datum ${datum}.`);
+
         try {
             const filepath = `${this.baseFilePath}/${new Date().toISOString().replace(/T.*/, '')}.json`;
 
             let data: any = {};
 
+            this.logger.info(`Checking existence of file.`);
             if (await FileUtilities.fileExistsForWriting(filepath)) {
+                this.logger.info(`File exists.`);
                 data = await FileUtilities.readJsonFile(filepath);
             }
 
             data[Date.now()] = datum;
 
+            this.logger.info(`Writing to file.`);
             await FileUtilities.writeJsonToFile(filepath, data);
         } catch(e) {
             this.logger.error(`Failed to log datum ${datum} due to ${e.toString()}`);

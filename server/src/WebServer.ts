@@ -17,22 +17,22 @@ export default class WebServer {
         // Serve static files from the client React app
         this.app.use(express.static(clientBuildPath));
 
-        this.app.get('/api/data/:fileName', (req, res) => {
+        this.app.get('/api/data/:fileName', async (req, res) => {
             const dataFileName = req.params.fileName;
             this.logger.info(`Recieved request for data '${dataFileName}'.`);
-            res.json(FileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
+            res.json(await FileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
             this.logger.info('Sent graph data.');
         });
 
-        this.app.get('/api/logs/:fileName', (req,res) => {
+        this.app.get('/api/logs/:fileName', async (req,res) => {
             const logsFileName = req.params.fileName;
             this.logger.info(`Recieved request for logs '${logsFileName}'.`);
-            res.json(FileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
+            res.json(await FileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
             this.logger.info('Sent log data.');
         });
 
-        this.app.get('/api/listdata', (req,res) => {
-            res.json(FileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
+        this.app.get('/api/listdata', async (req,res) => {
+            res.json(await FileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
             this.logger.info('Sent list of data files.');
         });
 
