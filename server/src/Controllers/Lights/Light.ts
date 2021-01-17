@@ -71,7 +71,7 @@ export default class Light implements ILight {
     public async setAmbientAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => device.setColor(51, 0, 0), `Setting ambient lighting for ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.On : this.cachedOnState;
+        this.cachedOnState = result ? LightState.On : LightState.Unknown;
 
         return result;
     }
