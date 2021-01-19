@@ -52,7 +52,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 			}
 		}
 		catch(error) {
-			this.logger.error(`Error occured while running control loop for ${light.address}.`);
+			this.logger.error(`Error occured while controlling ${light.address}.`);
             this.logger.error(error.toString());
             this.lightsManager.removeLight(light.address);
 		}
