@@ -31,7 +31,7 @@ function App() {
         <Route path="/data/:graphName" children={<LineChart/>} />
         <Route path="/">
         <ul>
-          {graphNames.map((graphName, i) => {     
+          {graphNames.sort().reverse().map((graphName, i) => {     
             return (
               <li className="btn-link">
                 <Link to={`/data/${graphName}`} key={i} >{graphName}</Link>
