@@ -30,7 +30,7 @@ export default class App {
             new LightFactory(lightPromiseTimeout));
 
             const meanSensorDecorator = new MeanSensorDecorator(
-                5,
+                10,
                 new LightSensor(new TSL2561(2, 16))
             );
 
