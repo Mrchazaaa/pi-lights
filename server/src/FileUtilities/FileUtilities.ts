@@ -3,8 +3,6 @@ const fsPromises = fs.promises
 import AsyncLock from 'async-lock';
 const lock = new AsyncLock();
 
-const FILE_LOCK = 'file';
-
 export default class FileUtilities {
     public static listDirectoryContents(directories: string[]): string[] {
         let fileNames: string[] = [];
@@ -25,7 +23,7 @@ export default class FileUtilities {
     }
 
     public static async readJsonFile(filepath: string): Promise<object> {
-        const rawData = await lock.acquire(FILE_LOCK, async () => {
+        const rawData = await lock.acquire(filepath, async () => {
             return await fsPromises.readFile(filepath, 'utf-8');
         });
         return JSON.parse(rawData);
@@ -33,7 +31,7 @@ export default class FileUtilities {
 
     public static async writeJsonToFile(filepath: string, data: any): Promise<void> {
         const stringifiedData = JSON.stringify(data);
-        return await lock.acquire(FILE_LOCK, async () => {
+        return await lock.acquire(filepath, async () => {
             return await fsPromises.writeFile(filepath, stringifiedData, 'utf-8');
         });
     }

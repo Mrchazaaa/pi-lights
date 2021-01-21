@@ -67,7 +67,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
     }
 
     private getLightThreshold(): number {
-        const offset = this.lightsManager.getLights().every(l => l.getCachedOnState() === LightState.On) ? 0.075 : 0;
+        const offset = this.lightsManager.getLights().every(l => l.getCachedOnState() === LightState.On) ? 1 : 0;
         return this.lightThreshold + offset;
     }
 
