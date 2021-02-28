@@ -5,3 +5,7 @@ sudo systemctl restart light-control
 
 * used to enable the service whenever the system boots
 sudo systemctl enable light-control
+
+To Do:
+ - operation queue to avoid thread conflicts
+ - retryable operation
