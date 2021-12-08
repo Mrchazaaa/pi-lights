@@ -29,6 +29,12 @@ export default class FileUtilities {
         return JSON.parse(rawData);
     }
 
+    public static async deleteFile(filepath: string): Promise<void> {
+        await lock.acquire(filepath, async () =>
+            await fsPromises.unlink(filepath)
+        );
+    }
+
     public static async writeJsonToFile(filepath: string, data: any): Promise<void> {
         const stringifiedData = JSON.stringify(data);
         return await lock.acquire(filepath, async () => {

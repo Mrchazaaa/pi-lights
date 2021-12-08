@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { dataBaseFilePath, logsBaseFilePath } from '../../../config.json';
+import { dataBaseFilePath, logsBaseFilePath, maxFiles } from '../../../config.json';
 import { Logger } from 'winston';
 import WinstonLoggerFactory from './WinstonLoggerFactory';
 import DataLogger, { IDataLogger } from './DataLogger';
@@ -23,7 +23,7 @@ export default class LoggerProvider {
             return this.disabledLogger;
         }
 
-        if (!this.logger) this.logger = WinstonLoggerFactory.createLogger(logsBaseFilePath, this.isDisabled)
+        if (!this.logger) this.logger = WinstonLoggerFactory.createLogger(logsBaseFilePath, this.isDisabled, maxFiles)
 
         return new ContextAwareLogger(this.logger, context);
     }
@@ -33,7 +33,7 @@ export default class LoggerProvider {
             return { log: () => { return; } }
         }
 
-        if (!this.dataLogger) this.dataLogger = new DataLogger(dataBaseFilePath);
+        if (!this.dataLogger) this.dataLogger = new DataLogger(dataBaseFilePath, maxFiles);
 
         return this.dataLogger;
     }

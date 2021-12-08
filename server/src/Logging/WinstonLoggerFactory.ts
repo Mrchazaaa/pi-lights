@@ -5,9 +5,9 @@ import Winston, { format, Logger } from 'winston';
 const { combine, timestamp } = format;
 
 export default class WinstonLoggerFactory {
-    public static createLogger(logsBaseFilePath: string, isDisabled: boolean): Logger  {
+    public static createLogger(logsBaseFilePath: string, isDisabled: boolean, maxFiles: number): Logger  {
         return Winston.createLogger({
-            transports: [ this.createLogsDailyRotateTransport(logsBaseFilePath) ],
+            transports: [ this.createLogsDailyRotateTransport(logsBaseFilePath, maxFiles) ],
             format: combine(
                 timestamp({ format: 'HH:mm:ss.SSS' }),
                 format.printf(info => {
@@ -36,10 +36,11 @@ export default class WinstonLoggerFactory {
         });
     }
 
-    private static createLogsDailyRotateTransport(logsBaseFilePath: string): Winston.transport {
+    private static createLogsDailyRotateTransport(logsBaseFilePath: string, maxFiles: number): Winston.transport {
         return new Winston.transports.DailyRotateFile({
             filename: `${logsBaseFilePath}/%DATE%.log`,
             datePattern: 'YYYY-MM-DD',
+            maxFiles: `${maxFiles}d`
         });
     }
 }
