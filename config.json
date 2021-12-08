@@ -1,5 +1,6 @@
 {
     "logsBaseFilePath": "/home/pi/workspace/pi-lights/storage/logs",
     "dataBaseFilePath": "/home/pi/workspace/pi-lights/storage/data",
-    "clientBuildPath": "/home/pi/workspace/pi-lights/client/build"
+    "clientBuildPath": "/home/pi/workspace/pi-lights/client/build",
+    "maxFiles": 3
 }
