@@ -1,3 +1,5 @@
 export default interface IDataLogger {
-    log(datum: number): void;
+    logLux(datum: number, threshold: number): Promise<void>;
+    logThreshold(datum: number): Promise<void>;
+    logLightState(datum: { name: string, state: number }[] ): Promise<void>;
 }

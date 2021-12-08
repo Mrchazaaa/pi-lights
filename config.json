@@ -1,5 +1,5 @@
 {
-    "logsBaseFilePath": "/home/pi/workspace/lights/storage/logs",
-    "dataBaseFilePath": "/home/pi/workspace/lights/storage/data",
-    "clientBuildPath": "/home/pi/workspace/lights/client/build"
+    "logsBaseFilePath": "/home/pi/workspace/pi-lights/storage/logs",
+    "dataBaseFilePath": "/home/pi/workspace/pi-lights/storage/data",
+    "clientBuildPath": "/home/pi/workspace/pi-lights/client/build"
 }

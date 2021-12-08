@@ -23,7 +23,7 @@ describe('Tests for DataLogger.', () => {
         (FileUtilities.writeJsonToFile as jest.Mock) = jest.fn();
         (FileUtilities.fileExistsForWriting as jest.Mock) = jest.fn().mockResolvedValueOnce(false);
 
-        await dataLogger.log(dummyDatum);
+        await dataLogger.logLux(dummyDatum, 0);
 
         const expectedObject = {};
         expectedObject[dummyDate] = dummyDatum;
@@ -40,7 +40,7 @@ describe('Tests for DataLogger.', () => {
         (FileUtilities.readJsonFile as jest.Mock) = jest.fn().mockResolvedValue({});
         (FileUtilities.fileExistsForWriting as jest.Mock) = jest.fn().mockResolvedValueOnce(true);
 
-        await dataLogger.log(dummyDatum);
+        await dataLogger.logLux(dummyDatum, 0);
 
         const expectedObject = dummyExistingData;
         expectedObject[dummyDate] = dummyDatum;

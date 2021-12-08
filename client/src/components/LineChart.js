@@ -6,14 +6,14 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import Logs from './Logs';
 
 const Plot = createPlotlyComponent(Plotly);
- 
-function formatDataPointsJson(unformattedDataPoints) {
+
+function formatDataPointsJson(graphName, unformattedDataPoints) {
 	var formattedDataPoints = {x: [], y: []};
 
-	Object.keys(unformattedDataPoints).forEach(key => {
+	Object.keys(unformattedDataPoints).sort().forEach(key => {
 		var x = Number(key);
 
-		var date = new Date(x).toLocaleTimeString();
+		var date = graphName + ' ' + new Date(x).toLocaleTimeString();
 
 		formattedDataPoints.x.push(date);
 
@@ -27,50 +27,84 @@ function formatDataPointsJson(unformattedDataPoints) {
 
 
 // Create async function for fetching graph file data
-async function fetchFileData(graphName, setdataPoints) {
+async function fetchFileData(graphName, setLuxDataPoints, setThresholdDataPoints, setLightsDataPoints) {
 	// Use Fetch API to fetch '/api' endpoint
 	var fileData = await fetch(`/api/data/${graphName}`)
-	.then(res => res.json()) // process incoming data
-	
-	fileData = formatDataPointsJson(fileData);
+        .then(res => res.json()); // process incoming data
 
-	setdataPoints(fileData)
+	setLuxDataPoints(formatDataPointsJson(graphName, fileData.lux));
+	setThresholdDataPoints(formatDataPointsJson(graphName, fileData.threshold));
+
+    let lightsDataPoints = {};
+    Object.keys(fileData.lights).forEach(x => {
+        lightsDataPoints[x] = formatDataPointsJson(graphName, fileData.lights[x])
+    });
+
+    setLightsDataPoints(lightsDataPoints);
 }
 
 function LineChart() {
 
 	let { graphName } = useParams();
 
-	const [dataPoints, setdataPoints] = useState({x: [], y: []})
+	const [luxDataPoints, setLuxDataPoints] = useState({x: [], y: []})
+	const [thresholdDataPoints, setThresholdDataPoints] = useState({x: [], y: []})
+	const [lightsDataPoints, setLightsDataPoints] = useState({})
 
 	// Use useEffect to call fetchFileNames() on initial render
 	useEffect(() => {
-		fetchFileData(graphName, setdataPoints)
+		fetchFileData(graphName, setLuxDataPoints, setThresholdDataPoints, setLightsDataPoints)
 	}, [graphName])
 
 	return (
 		<div style={{height: '100vh'}}>
 	        <ul>
 				<li className="btn-link"><Link to='/'>back</Link></li>
-				<li className="btn-link"><Link onClick={() => fetchFileData(graphName, setdataPoints)} className="btn-link">refresh</Link></li>
+				<li className="btn-link"><Link onClick={() => fetchFileData(graphName, setLuxDataPoints, setThresholdDataPoints, setLightsDataPoints)} className="btn-link">refresh</Link></li>
 				{/* <li onClick={() => fetchFileData(graphName, setdataPoints)} className="btn-link"><a >refresh</a></li> */}
 			</ul>
 
 			<Plot
 				data={[
-				{
-					x: dataPoints.x,
-					y: dataPoints.y,
-					type: 'scatter',
-					mode: 'lines+markers',
-					marker: {color: 'red'},
-				},
+                    {
+                        x: luxDataPoints.x,
+                        y: luxDataPoints.y,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: {color: 'red'},
+                        name: 'Lux',
+                    },
+                    {
+                        x: thresholdDataPoints.x,
+                        y: thresholdDataPoints.y,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: {color: 'blue'},
+                        name: 'Threshold',
+                        line: {"shape": 'hv'},
+                    },
+                    ...Object.keys(lightsDataPoints).map(x => {
+                        return {
+                            x: lightsDataPoints[x].x,
+                            y: lightsDataPoints[x].y,
+                            type: 'scatter',
+                            mode: 'lines+markers',
+                            marker: {color: 'green'},
+                            name: x,
+                            line: {"shape": 'hv'},
+                        }
+                    })
 				]}
 				layout={{
 					title: 'Light Levels by Time (UTC)',
+                    xaxis: {
+                        tickformat: '%H:%M:%S',
+                        type: 'date'
+                    },
 				}}
+                useResizeHandler={true}
 				style={{
-					width: '100%', 
+					width: '100%',
 					height: '85%',
 				}}
 			/>

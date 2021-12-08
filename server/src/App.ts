@@ -18,7 +18,6 @@ export default class App {
     private logger: ILogger;
     private lightsManager: ILightsManager;
     private lightSensingLightSwitcher: ILightSensingLightSwitcher;
-    private buttonManager: IButtonManager;
     private shouldControlLoopRun: boolean;
 
     constructor() {
@@ -41,14 +40,10 @@ export default class App {
                     lightSensorReadRateLimit),
                 isDarkThreshold);
 
-            this.buttonManager = new ButtonManager(this.lightsManager);
-
         this.shouldControlLoopRun = false;
     }
 
     public async start() {
-        this.buttonManager.initialize();
-
 		this.shouldControlLoopRun = true;
 
 		while(this.shouldControlLoopRun) {
@@ -60,6 +55,5 @@ export default class App {
         this.logger.info('Disposing.');
         this.shouldControlLoopRun = false;
         this.lightSensingLightSwitcher.dispose();
-        this.buttonManager.dispose();
     }
 }

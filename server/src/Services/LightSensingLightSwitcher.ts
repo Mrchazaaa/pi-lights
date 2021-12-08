@@ -23,11 +23,13 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 	public async runControlLoop(): Promise<void> {
         this.logger.info('Running control loop.');
 
+        const threshold = await this.getLightThreshold();
+
         await this.lightsManager.discoverDevicesAsync();
-        await Promise.all(this.lightsManager.getLights().map(light => this.controlLightAsync(light)));
+        await Promise.all(this.lightsManager.getLights().map(light => this.controlLightAsync(light, threshold)));
 	}
 
-	private async controlLightAsync(light: ILight) : Promise<void> {
+	private async controlLightAsync(light: ILight, threshold: number) : Promise<void> {
         this.logger.info(`Controlling light ${light.address}.`);
 
 		try
@@ -37,7 +39,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 				this.logger.info(`Initializing light state cache for ${light.address}, as '${light.getCachedOnState()}'.`);
 			}
 
-			if (await this.isDarkAsync()) {
+			if (await this.isDarkAsync(threshold)) {
 				this.logger.info('It is dark.');
 
 				if (light.getCachedOnState() === LightState.Off) {
@@ -58,17 +60,19 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 		}
     }
 
-    private async isDarkAsync(): Promise<boolean> {
+    private async isDarkAsync(threshold: number): Promise<boolean> {
         this.logger.info(`Reading new light level.`);
         const reading = (await this.lightSensor.getReadingAsync());
         this.logger.info(`Read new light level '${reading}'.`);
-        await this.dataLogger.log(reading);
-        return (this.getLightThreshold() - reading) >= 0;
+        await this.dataLogger.logLux(reading, threshold);
+        return (threshold - reading) >= 0;
     }
 
-    private getLightThreshold(): number {
+    private async getLightThreshold(): Promise<number> {
         const offset = this.lightsManager.getLights().every(l => l.getCachedOnState() === LightState.On) ? 1 : 0;
-        return this.lightThreshold + offset;
+        const threshold = this.lightThreshold + offset;
+        await this.dataLogger.logThreshold(threshold);
+        return threshold;
     }
 
     public dispose(): void {

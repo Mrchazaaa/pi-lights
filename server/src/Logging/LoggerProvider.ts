@@ -30,7 +30,7 @@ export default class LoggerProvider {
 
     public static createDataLogger(): IDataLogger  {
         if (this.isDisabled) {
-            return { log: () => { return; } }
+            return { logLux: async () => { return new Promise(res => undefined) }, logThreshold: async () => { return new Promise(res => undefined) }, logLightState: async () => { return new Promise(res => undefined) } }
         }
 
         if (!this.dataLogger) this.dataLogger = new DataLogger(dataBaseFilePath);

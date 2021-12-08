@@ -1,4 +1,4 @@
-import LoggerProvider from '../../Logging/LoggerProvider';
+import LoggerProvider, { IDataLogger } from '../../Logging/LoggerProvider';
 import ILogger from '../../Logging/ILogger'
 import LightState from './LightState';
 import { timeout } from 'promise-timeout';
@@ -11,12 +11,14 @@ export default class Light implements ILight {
     private promiseTimeout: number;
     private cachedOnState: LightState;
     public address: string;
+	private dataLogger: IDataLogger;
 
     constructor(address: string, promiseTimeout: number) {
 		this.logger = LoggerProvider.createLogger(Light.name);
         this.promiseTimeout = promiseTimeout;
         this.cachedOnState = LightState.Unknown;
         this.address = address;
+		this.dataLogger = LoggerProvider.createDataLogger();
 
         this.lightControl = new Control(
             address,
@@ -27,6 +29,19 @@ export default class Light implements ILight {
         );
     }
 
+    private async setCachedLightState(newState: LightState) {
+        switch(newState) {
+            case LightState.On:
+                await this.dataLogger.logLightState([{name: this.address, state: 1}]);
+                break;
+            case LightState.Off:
+                await this.dataLogger.logLightState([{name: this.address, state: 0}]);
+                break;
+        }
+
+        this.cachedOnState = newState;
+    }
+
     public getCachedOnState() {
         return this.cachedOnState;
     }
@@ -34,7 +49,7 @@ export default class Light implements ILight {
     public async turnOnAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: IControl) => device.turnOn(), `Turning on ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.On : LightState.Unknown;
+        await this.setCachedLightState(result ? LightState.On : LightState.Unknown);
 
         return result;
     }
@@ -55,7 +70,7 @@ export default class Light implements ILight {
     public async turnOffAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => device.turnOff(), `Turning off ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.Off : LightState.Unknown;
+        await this.setCachedLightState(result ? LightState.Off : LightState.Unknown);
 
         return result;
     }
@@ -63,7 +78,7 @@ export default class Light implements ILight {
     public async setStrobeAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => device.setPattern('seven_color_strobe_flash', 100), `Setting strobe pattern for ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.On : this.cachedOnState;
+        await this.setCachedLightState(result ? LightState.On : this.cachedOnState);
 
         return result;
     }
@@ -71,7 +86,7 @@ export default class Light implements ILight {
     public async setAmbientAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors(async (device: typeof Control) => device.setColor(51, 0, 0), `Setting ambient lighting for ${this.lightControl._address}.`);
 
-        this.cachedOnState = result ? LightState.On : LightState.Unknown;
+        await this.setCachedLightState(result ? LightState.On : LightState.Unknown);
 
         return result;
     }
@@ -79,7 +94,7 @@ export default class Light implements ILight {
     public async updateStateCacheAsync(): Promise<boolean> {
         const result = await this.handleConnectionErrors<IControlState>(async (device: typeof Control) => device.queryState(), `Querying on state of ${this.lightControl._address}.`);
 
-        this.cachedOnState = result.on ? LightState.On : LightState.Off;
+        await this.setCachedLightState(result.on ? LightState.On : LightState.Off);
 
         return result.on;
     }
@@ -94,7 +109,7 @@ export default class Light implements ILight {
         catch(e) {
             this.logger.error(`Operation '${description}' failed.`);
             this.logger.error(e.toString());
-            this.cachedOnState = LightState.Unknown;
+            await this.setCachedLightState(LightState.Unknown);
             throw e;
         }
     }
