@@ -38,7 +38,7 @@ export default class DataLogger implements IDataLogger {
 
                 await oldFiles.forEach(async x => {
                     this.logger.info(`Deleting ${x}.json`);
-                    await FileUtilities.deleteFile(`${x}.json`);
+                    await FileUtilities.deleteFile(`${dataBaseFilePath}/${x}.json`);
                 });
             }
 
