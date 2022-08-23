@@ -5,7 +5,7 @@ Description=Raspberry pi led light monitoring.
 Type=simple
 After=network-online.target
 Wants=network-online.target
-ExecStart=/bin/bash /home/pi/workspace/lights/run-lights.sh
+ExecStart=/bin/bash -c "node /home/pi/workspace/lights/server/build/server/src/index.js"
 
 [Install]
 WantedBy=multi-user.target

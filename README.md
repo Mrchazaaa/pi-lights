@@ -10,7 +10,7 @@ Below, you'll find a video demonstration of the lights at work.
 
 <a href='https://www.youtube.com/watch?v=ZpO6WK41Bb8&ab_channel=Mrchazaaa "Lights Demonstration"'><image src="./videoImage.png"></a>
 
-As the project has grown it has come to encompass a wider range of hom automation functionality, including:
+As the project has grown it has come to encompass a wider range of home automation functionality, including:
 * Alexa welcome message on arrival.
 * Automatic lights-out timer.
 
