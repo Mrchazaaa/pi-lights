@@ -2,8 +2,18 @@ import fs from 'fs';
 const fsPromises = fs.promises
 import AsyncLock from 'async-lock';
 const lock = new AsyncLock();
+import path from 'path';
 
 export default class FileUtilities {
+    private static async exists(path) {
+        try {
+            await fsPromises.access(path);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
     public static listDirectoryContents(directories: string[]): string[] {
         let fileNames: string[] = [];
 
@@ -36,7 +46,15 @@ export default class FileUtilities {
     }
 
     public static async writeJsonToFile(filepath: string, data: any): Promise<void> {
+        const dirname = path.dirname(filepath);
+        const exist = await FileUtilities.exists(dirname);
+
+        if (!exist) {
+            fs.mkdirSync(dirname, { recursive: true });
+        }
+
         const stringifiedData = JSON.stringify(data);
+
         return await lock.acquire(filepath, async () => {
             return await fsPromises.writeFile(filepath, stringifiedData, 'utf-8');
         });

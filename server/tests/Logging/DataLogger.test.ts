@@ -11,7 +11,7 @@ const dummyDate: number = 1000000000000;
 
 describe('Tests for DataLogger.', () => {
     beforeEach(() => {
-        dataLogger = new DataLogger(dummyFilePath);
+        dataLogger = new DataLogger(dummyFilePath, 1);
         MockDate.set(dummyDate);
     });
 
