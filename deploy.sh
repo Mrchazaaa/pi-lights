@@ -13,6 +13,12 @@ npm install --prefix ./server
 
 npm run build --prefix ./server
 
-copy ./light-control.service /etc/systemd/system
+cp ./light-control.service /etc/systemd/system
 
-systemctl enable light-control --now
+systemctl daemon-reload
+
+systemctl stop light-control.service
+systemctl start light-control.service
+systemctl enable light-control.service
+
+# sudo bash deploy.sh
