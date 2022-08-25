@@ -18,8 +18,8 @@ function formatDataPointsJson(unformattedDataPoints) {
 		formattedDataPoints.light.x.push(date);
 		formattedDataPoints.threshold.x.push(date);
 
-		formattedDataPoints.light.y.push(Number(unformattedDataPoints.light[key]));
-		formattedDataPoints.threshold.y.push(Number(unformattedDataPoints.threshold[key]));
+		formattedDataPoints.light.y.push(Number(unformattedDataPoints[key].light));
+		formattedDataPoints.threshold.y.push(Number(unformattedDataPoints[key].threshold));
 	});
 
 	return formattedDataPoints;
@@ -59,15 +59,15 @@ function LineChart() {
 			<Plot
 				data={[
 				{
-					x: dataPoints.threshold.x,
-					y: dataPoints.threshold.y,
+					x: dataPoints.threshold?.x,
+					y: dataPoints.threshold?.y,
 					type: 'scatter',
 					mode: 'lines+markers',
 					marker: {color: 'blue'},
 				},
 				{
-					x: dataPoints.light.x,
-					y: dataPoints.light.y,
+					x: dataPoints.light?.x,
+					y: dataPoints.light?.y,
 					type: 'scatter',
 					mode: 'lines+markers',
 					marker: {color: 'red'},

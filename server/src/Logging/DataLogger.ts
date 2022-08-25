@@ -42,7 +42,7 @@ export default class DataLogger implements IDataLogger {
                 });
             }
 
-            data[Date.now()] = {light: datum, threshold: threshold};
+            data[Date.now()] = {light: datum, threshold};
 
             this.logger.info(`Writing to file.`);
             await FileUtilities.writeJsonToFile(filepath, data);

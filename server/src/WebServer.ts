@@ -26,7 +26,7 @@ export default class WebServer {
             }
             catch(err) {
                 this.logger.error(err);
-                res.status(500).send("Something broke :(")
+                res.status(500).send('Something broke :(')
             }
         });
 
@@ -39,7 +39,7 @@ export default class WebServer {
             }
             catch(err) {
                 this.logger.error(err);
-                res.status(500).send("Something broke :(")
+                res.status(500).send('Something broke :(')
             }
         });
 
@@ -50,7 +50,7 @@ export default class WebServer {
             }
             catch(err) {
                 this.logger.error(err);
-                res.status(500).send("Something broke :(")
+                res.status(500).send('Something broke :(')
             }
         });
 
@@ -60,7 +60,7 @@ export default class WebServer {
             }
             catch(err) {
                 this.logger.error(err);
-                res.status(500).send("Something broke :(")
+                res.status(500).send('Something broke :(')
             }
         });
 
