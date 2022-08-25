@@ -18,26 +18,50 @@ export default class WebServer {
         this.app.use(express.static(clientBuildPath));
 
         this.app.get('/api/data/:fileName', async (req, res) => {
-            const dataFileName = req.params.fileName;
-            this.logger.info(`Recieved request for data '${dataFileName}'.`);
-            res.json(await FileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
-            this.logger.info('Sent graph data.');
+            try {
+                const dataFileName = req.params.fileName;
+                this.logger.info(`Recieved request for data '${dataFileName}'.`);
+                res.json(await FileUtiliies.readJsonFile(`${dataBaseFilePath}/${dataFileName}.json`));
+                this.logger.info('Sent graph data.');
+            }
+            catch(err) {
+                this.logger.error(err);
+                res.status(500).send("Something broke :(")
+            }
         });
 
         this.app.get('/api/logs/:fileName', async (req,res) => {
-            const logsFileName = req.params.fileName;
-            this.logger.info(`Recieved request for logs '${logsFileName}'.`);
-            res.json(await FileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
-            this.logger.info('Sent log data.');
+            try {
+                const logsFileName = req.params.fileName;
+                this.logger.info(`Recieved request for logs '${logsFileName}'.`);
+                res.json(await FileUtiliies.readJsonFile(`${logsBaseFilePath}/${logsFileName}.log`));
+                this.logger.info('Sent log data.');
+            }
+            catch(err) {
+                this.logger.error(err);
+                res.status(500).send("Something broke :(")
+            }
         });
 
         this.app.get('/api/listdata', async (req,res) => {
-            res.json(await FileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
-            this.logger.info('Sent list of data files.');
+            try {
+                res.json(await FileUtiliies.listDirectoryContents([dataBaseFilePath, logsBaseFilePath]));
+                this.logger.info('Sent list of data files.');
+            }
+            catch(err) {
+                this.logger.error(err);
+                res.status(500).send("Something broke :(")
+            }
         });
 
         this.app.get('*', (req,res) =>{
-            res.sendFile(`${clientBuildPath}/index.html`);
+            try {
+                res.sendFile(`${clientBuildPath}/index.html`);
+            }
+            catch(err) {
+                this.logger.error(err);
+                res.status(500).send("Something broke :(")
+            }
         });
 
         const port = process.env.PORT || 5000;
