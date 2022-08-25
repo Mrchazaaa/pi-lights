@@ -1,3 +1,3 @@
 export default interface IDataLogger {
-    log(datum: number): void;
+    log(datum: number, threshold: number): void;
 }

@@ -15,7 +15,7 @@ export default class DataLogger implements IDataLogger {
         this.maxFiles = maxFiles;
     }
 
-    public async log(datum: number): Promise<void> {
+    public async log(datum: number, threshold: number): Promise<void> {
         this.logger.info(`Logging datum ${datum}.`);
 
         try {
@@ -42,12 +42,12 @@ export default class DataLogger implements IDataLogger {
                 });
             }
 
-            data[Date.now()] = datum;
+            data[Date.now()] = {light: datum, threshold: threshold};
 
             this.logger.info(`Writing to file.`);
             await FileUtilities.writeJsonToFile(filepath, data);
         } catch(e) {
-            this.logger.error(`Failed to log datum ${datum} due to ${e.toString()}`);
+            this.logger.error(`Failed to log datum ${{datum, threshold}} due to ${e.toString()}`);
             throw e;
         }
     }

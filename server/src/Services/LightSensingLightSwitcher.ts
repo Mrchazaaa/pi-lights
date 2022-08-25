@@ -62,8 +62,9 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
         this.logger.info(`Reading new light level.`);
         const reading = (await this.lightSensor.getReadingAsync());
         this.logger.info(`Read new light level '${reading}'.`);
-        await this.dataLogger.log(reading);
-        return (this.getLightThreshold() - reading) >= 0;
+        const threshold = this.getLightThreshold();
+        await this.dataLogger.log(reading, threshold);
+        return (threshold - reading) >= 0;
     }
 
     private getLightThreshold(): number {

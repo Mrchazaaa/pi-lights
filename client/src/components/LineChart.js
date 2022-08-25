@@ -6,20 +6,20 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import Logs from './Logs';
 
 const Plot = createPlotlyComponent(Plotly);
- 
+
 function formatDataPointsJson(unformattedDataPoints) {
-	var formattedDataPoints = {x: [], y: []};
+	var formattedDataPoints = {light: {x: [], y: []}, threshold: {x: [], y: []}};
 
 	Object.keys(unformattedDataPoints).forEach(key => {
 		var x = Number(key);
 
 		var date = new Date(x).toLocaleTimeString();
 
-		formattedDataPoints.x.push(date);
+		formattedDataPoints.light.x.push(date);
+		formattedDataPoints.threshold.x.push(date);
 
-		var y = Number(unformattedDataPoints[key]);
-
-		formattedDataPoints.y.push(y);
+		formattedDataPoints.light.y.push(Number(unformattedDataPoints.light[key]));
+		formattedDataPoints.threshold.y.push(Number(unformattedDataPoints.threshold[key]));
 	});
 
 	return formattedDataPoints;
@@ -31,7 +31,7 @@ async function fetchFileData(graphName, setdataPoints) {
 	// Use Fetch API to fetch '/api' endpoint
 	var fileData = await fetch(`/api/data/${graphName}`)
 	.then(res => res.json()) // process incoming data
-	
+
 	fileData = formatDataPointsJson(fileData);
 
 	setdataPoints(fileData)
@@ -41,7 +41,7 @@ function LineChart() {
 
 	let { graphName } = useParams();
 
-	const [dataPoints, setdataPoints] = useState({x: [], y: []})
+	const [dataPoints, setdataPoints] = useState({light: {x: [], y: [], threshold: {x: [], y: []}}})
 
 	// Use useEffect to call fetchFileNames() on initial render
 	useEffect(() => {
@@ -59,8 +59,15 @@ function LineChart() {
 			<Plot
 				data={[
 				{
-					x: dataPoints.x,
-					y: dataPoints.y,
+					x: dataPoints.threshold.x,
+					y: dataPoints.threshold.y,
+					type: 'scatter',
+					mode: 'lines+markers',
+					marker: {color: 'blue'},
+				},
+				{
+					x: dataPoints.light.x,
+					y: dataPoints.light.y,
 					type: 'scatter',
 					mode: 'lines+markers',
 					marker: {color: 'red'},
@@ -70,7 +77,7 @@ function LineChart() {
 					title: 'Light Levels by Time (UTC)',
 				}}
 				style={{
-					width: '100%', 
+					width: '100%',
 					height: '85%',
 				}}
 			/>
