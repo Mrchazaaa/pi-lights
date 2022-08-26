@@ -34,7 +34,7 @@ export default class LightSensingLightSwitcher implements ILightSensingLightSwit
 		{
 			if (light.getCachedOnState() === LightState.Unknown) {
 				await light.updateStateCacheAsync();
-				this.logger.info(`Initializing light state cache for ${light.address}, as '${light.getCachedOnState()}'.`);
+				this.logger.info(`Initializing light state cache for ${light.address}, as '${LightState[light.getCachedOnState()]}'.`);
 			}
 
 			if (await this.isDarkAsync()) {
