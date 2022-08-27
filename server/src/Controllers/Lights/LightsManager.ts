@@ -47,7 +47,7 @@ export default class LightsManager implements ILightsManager {
 
     private async doDiscoverDevicesAsync(): Promise<void> {
         (await Discovery.scan(this.discoveryTimeout)).forEach((deviceOptions: IDeviceOptions) => {
-            if (this.lightsCache[deviceOptions.address] == undefined) {
+            if (this.lightsCache[deviceOptions.address] === undefined) {
                 this.logger.info(`Discovered: ${deviceOptions.address}`);
                 const light = this.lightFactory.createLight(deviceOptions.address);
                 this.lightsCache[deviceOptions.address] = light;
