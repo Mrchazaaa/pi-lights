@@ -5,12 +5,12 @@ import LoggerProvider, { ILogger } from './LoggerProvider';
 
 export default class DataLogger implements IDataLogger {
 
-	private logger: ILogger;
+    private logger: ILogger;
     private baseFilePath: string;
     private maxFiles: number;
 
     constructor(baseFilePath: string, maxFiles: number) {
-		this.logger = LoggerProvider.createLogger(DataLogger.name);
+        this.logger = LoggerProvider.createLogger(DataLogger.name);
         this.baseFilePath = baseFilePath;
         this.maxFiles = maxFiles;
     }
@@ -41,12 +41,14 @@ export default class DataLogger implements IDataLogger {
                 const today = new Date();
                 const logCutOffDate = new Date(today);
                 const dataFiles = FileUtilities.listDirectoryContents([dataBaseFilePath]);
+		logCutOffDate.setDate(logCutOffDate.getDate() - this.maxFiles);
+                this.logger.info(`Found files: ${dataFiles}`);
 
-                const oldFiles = dataFiles.filter(x => Date.parse(x) < logCutOffDate.setDate(logCutOffDate.getDate() - this.maxFiles));
+                const oldFiles = dataFiles.filter(x => Date.parse(x) < logCutOffDate.getTime());
 
                 await oldFiles.forEach(async x => {
                     this.logger.info(`Deleting ${x}.json`);
-                    await FileUtilities.deleteFile(`${x}.json`);
+                    await FileUtilities.deleteFile(`${this.baseFilePath}/${x}.json`);
                 });
             }
 
@@ -86,12 +88,27 @@ export default class DataLogger implements IDataLogger {
             this.logger.info(`Threshold logging - checking existence of file.`);
             if (await FileUtilities.fileExistsForWriting(filepath)) {
                 this.logger.info(`Threshold logging - file exists.`);
-		try {
-			data = await FileUtilities.readJsonFile(filepath);
-		} catch (e) {
-		    this.logger.error(`Failed read from file ${e.toString()}. Clearing data.`);
-		    data = {'lux': {}, 'threshold': {}, 'lights': {}};
-		}
+                try {
+                    data = await FileUtilities.readJsonFile(filepath);
+                } catch (e) {
+                    this.logger.error(`Failed read from file ${e.toString()}. Clearing data.`);
+                    data = {'lux': {}, 'threshold': {}, 'lights': {}};
+                }
+            } else {
+                this.logger.info(`Checking for old data files to delete after deciding to create new data file.`);
+
+                const today = new Date();
+                const logCutOffDate = new Date(today);
+                const dataFiles = FileUtilities.listDirectoryContents([dataBaseFilePath]);
+		logCutOffDate.setDate(logCutOffDate.getDate() - this.maxFiles);
+                this.logger.info(`Found files: ${dataFiles}`);
+
+                const oldFiles = dataFiles.filter(x => Date.parse(x) < logCutOffDate.getTime());
+
+                await oldFiles.forEach(async x => {
+                    this.logger.info(`Deleting ${x}.json`);
+                    await FileUtilities.deleteFile(`${this.baseFilePath}/${x}.json`);
+                });
             }
 
             if (Object.keys(data.threshold).length === 0) {
@@ -125,12 +142,27 @@ export default class DataLogger implements IDataLogger {
             this.logger.info(`Light state logging - checking existence of file.`);
             if (await FileUtilities.fileExistsForWriting(filepath)) {
                 this.logger.info(`Light state logging - file exists.`);
-		try {
-			data = await FileUtilities.readJsonFile(filepath);
-		} catch (e) {
-		    this.logger.error(`Failed read from file ${e.toString()}. Clearing data.`);
-		    data = {'lux': {}, 'threshold': {}, 'lights': {}};
-		}
+                try {
+                    data = await FileUtilities.readJsonFile(filepath);
+                } catch (e) {
+                    this.logger.error(`Failed read from file ${e.toString()}. Clearing data.`);
+                    data = {'lux': {}, 'threshold': {}, 'lights': {}};
+                }
+            } else {
+                this.logger.info(`Checking for old data files to delete after deciding to create new data file.`);
+
+                const today = new Date();
+                const logCutOffDate = new Date(today);
+                const dataFiles = FileUtilities.listDirectoryContents([dataBaseFilePath]);
+		logCutOffDate.setDate(logCutOffDate.getDate() - this.maxFiles);
+                this.logger.info(`Found files: ${dataFiles}`);
+
+                const oldFiles = dataFiles.filter(x => Date.parse(x) < logCutOffDate.getTime());
+
+                await oldFiles.forEach(async x => {
+                    this.logger.info(`Deleting ${x}.json`);
+                    await FileUtilities.deleteFile(`${this.baseFilePath}/${x}.json`);
+                });
             }
 
             datum.forEach(x => {
