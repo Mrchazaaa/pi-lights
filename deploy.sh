@@ -21,4 +21,8 @@ systemctl stop light-control.service
 systemctl start light-control.service
 systemctl enable light-control.service
 
+docker rm loki-container
+docker rm promtail-container
+docker-compose up -d
+
 # sudo bash deploy.sh

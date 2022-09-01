@@ -5,6 +5,7 @@ networks:
 
 services:
   loki:
+    container_name: loki-container
     image: grafana/loki:2.4.0
     ports:
       - "3100:3100"
@@ -15,6 +16,7 @@ services:
       - loki
 
   promtail:
+    container_name: promtail-container
     image: grafana/promtail:2.4.0
     volumes:
       - ./storage/logs:/logs
